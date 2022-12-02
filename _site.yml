@@ -9,5 +9,7 @@ navbar:
       href: mailto:<you@youremail.com>
     - icon: fa-github fa-lg
       href: http://github.com/<YOUR_GH_NAME>/
+    - text: "EDA"
+      href: EDA_Pei.html
 output:
   html_document

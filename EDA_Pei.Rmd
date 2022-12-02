@@ -1,0 +1,224 @@
+---
+title: "Statistical_analysis_Pei"
+author: "Pei Liu"
+date: "2022-11-29"
+output: html_document
+---
+
+
+```{r}
+library(viridis)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+library(tidyverse)
+library(ggridges)
+library(dplyr)
+library(plotly)
+library(corrplot)
+```
+
+
+```{r}
+raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
+```
+
+
+```{r}
+Childcare_center<-
+  raw_data%>%
+  janitor::clean_names() %>%
+  filter(status=="Permitted")%>%
+  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+         -day_care_id,-url,-date_permitted,-actual)%>%
+  drop_na(violation_rate_percent)%>% ## change from 17356 to 15910
+  drop_na(public_health_hazard_violation_rate) %>% ## actually no change
+  filter(age_range != "0 YEARS - 16 YEARS")
+Childcare_center
+```
+# Correlation Matrix Heat Map
+```{r}
+ Childcare_center %>% 
+  select(borough, total_educational_workers, program_type, maximum_capacity, violation_category) %>%
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  mutate(borough = as.numeric(as.factor(borough)),
+         program_type = as.numeric(as.factor(program_type)),
+         violation_category =as.numeric(as.factor(violation_category)) )%>% 
+  drop_na() %>% 
+  cor(method = "pearson" ) %>%
+  corrplot(
+    method = "color",
+    type = "lower",
+    tl.col = "Black",
+    tl.srt = 45,
+    diag = F,
+    order = "AOE"
+  )
+  
+```
+
+
+??
+# Frequency of Violation Category for Each center
+```{r}
+Childcare_center %>% 
+  group_by(violation_category, center_name) %>% 
+  summarise(count = n()) %>% 
+  knitr::kable()
+```
+
+
+
+# The relationship between maximum capacity and child care type
+We can see from the following boxplot that the distributions maximum capacity in preschool and Infants / Toddlers are significantly different. Overall, Preschool has higher maximum capacity than Infants/Toddlers, and the range of capicity is also wider than it is in the Infants/Toddlers.The max maximum capacity in childcare center is 371, while the max maximum capacity in Infants/Toddlers is 135.
+```{r}
+plotly_capacity_type = Childcare_center %>% 
+  group_by(violation_category, maximum_capacity, child_care_type) %>%
+  plot_ly(y = ~maximum_capacity, color = ~child_care_type, type = "box", colors = "viridis")
+plotly_capacity_type
+```
+
+# The relationship between maximum capacity and violation category
+We then want to examine whether there is connection between maximum capacity and violation. Since the maximum capacity in different child care types are different, we display the distribution of maximum capacity vs violation category by child care type. 
+
+We can conclude from the plot that there is no significant difference between the distribution of maximum capacity for each violation category. Besides, there are many outliers in each groups, which will affect our analysis results. 
+```{r}
+Childcare_center %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  group_by(violation_category, maximum_capacity, child_care_type) %>% 
+  ggplot(aes(x = violation_category, y = maximum_capacity)) +
+  geom_violin(aes(fill = child_care_type), 
+              color = "blue", 
+              alpha = .5) +
+  theme(legend.position = "bottom") 
+
+boxplot_capacity = Childcare_center %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  group_by(violation_category, maximum_capacity, child_care_type) %>% 
+  ggplot(aes(x = violation_category, y = maximum_capacity, color = child_care_type)) +
+  geom_boxplot() +
+  labs(
+    x = "Violation category",
+    y = "Maximum capacity",
+    color = ""
+  ) +
+  theme(legend.position = "bottom") 
+boxplot_capacity
+```
+
+To further analyze the association, we set maximum capacity less than its median as small center, and larger and equal than its median as larger center by child care type, and then compare the frequecny of violation types.
+
+
+**(1). Pre School**
+
+We can see from the frequency bar chart that pre schools with larger maximum capacity are more likely to violate related rules: the frequecnies are higher in all violation categories. In contract, pre schools with smaller maximum capacity have more chance of no violation.
+
+**(2). Infants/Toddlers**
+
+The frequency of violation is higher in Infants/Toddlers with larger maximum capacity; and the frequency of no violation is higher in Infants/Toddlers with smaller maximum capacity.
+```{r}
+library(patchwork)
+
+bar_max_cap1 = Childcare_center %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category),
+         maximum_capacity_group = ifelse(maximum_capacity<66, "small", "large")) %>%
+  filter(child_care_type == "Child Care - Pre School") %>% 
+  group_by(violation_category, maximum_capacity_group) %>% 
+  summarise(count = n()) %>% 
+  ggplot(aes(x = violation_category, y = count, fill = maximum_capacity_group)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_text(aes(label=count), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  labs(
+    x = "Violation Category",
+    y = "Frequency",
+    fill = "Group"
+  ) +
+  theme(legend.position = "bottom") 
+
+bar_max_cap2 = Childcare_center %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category),
+         maximum_capacity_group = ifelse(maximum_capacity<26, "small", "large")) %>%
+  filter(child_care_type == "Child Care - Infants/Toddlers") %>% 
+  group_by(violation_category, maximum_capacity_group) %>% 
+  summarise(count = n()) %>% 
+  ggplot(aes(x = violation_category, y = count, fill = maximum_capacity_group)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_text(aes(label=count), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  labs(
+    x = "Violation Category",
+    y = "Frequency",
+    fill = "Group"
+  ) +
+  theme(legend.position = "bottom") 
+
+bar_max_cap1 + bar_max_cap2
+# arrange
+```
+
+# The relationship between total educational workers and violation category
+As we can see, there's no significant difference between the distribution of total education workers in each violation categories.
+```{r}
+Childcare_center %>% 
+  group_by(violation_category, total_educational_workers, child_care_type) %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  ggplot(aes(x = violation_category, y = total_educational_workers)) +
+  geom_violin(aes(fill = child_care_type), 
+              color = "blue", 
+              alpha = .5) +
+  labs(
+    x = "Violation category",
+    y = "Total educational workers",
+    color = ""
+  ) +
+  theme(legend.position = "bottom") 
+
+boxplot_worker = Childcare_center %>% 
+  group_by(violation_category, total_educational_workers, child_care_type) %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  ggplot(aes(x =violation_category  , y = total_educational_workers , color = child_care_type)) +
+  geom_boxplot() +
+  labs(
+    x = "Violation category",
+    y = "Total educational workers",
+    color = ""
+  ) +
+  theme(legend.position = "bottom") 
+
+boxplot_worker
+
+```
+# The relationship between total educational worker, maximum capacity and child care type
+As we can see, there's no significant different within each child care type. But the educational workers per child is higher in Infants/Toddlers than it is in Pre school.
+```{r}
+plotly_capacity_type = Childcare_center %>% 
+  mutate(workers_per_child = total_educational_workers/maximum_capacity) %>% 
+  group_by(workers_per_child, violation_category, child_care_type) %>% 
+  plot_ly(y = ~workers_per_child, type = "box", x = ~violation_category, color = ~child_care_type,colors = "viridis") %>% 
+  layout(boxmode = "group")
+plotly_capacity_type
+```
+
+# Top 10 regulation summaries of childcare center inspection
+```{r}
+Childcare_center %>% 
+  group_by(regulation_summary) %>% 
+  summarise(Frquency = n()) %>% 
+  arrange(desc(Frquency)) %>% 
+  top_n(10) %>% 
+  knitr::kable()
+```
+
+# Top 10 inspection summaries result of childcare center inspection
+```{r}
+Childcare_center %>% 
+  drop_na() %>% 
+  group_by(inspection_summary_result) %>% 
+  summarise(Frquency = n()) %>% 
+  arrange(desc(Frquency)) %>% 
+  top_n(10) %>% 
+  knitr::kable()
+```
+
