@@ -6,7 +6,7 @@ output: html_document
 ---
 
 
-```{r}
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
 library(viridis)
 options(
   ggplot2.continuous.colour = "viridis",
@@ -20,12 +20,12 @@ library(corrplot)
 ```
 
 
-```{r}
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
 raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
 ```
 
 
-```{r}
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
 Childcare_center<-
   raw_data%>%
   janitor::clean_names() %>%
@@ -35,7 +35,7 @@ Childcare_center<-
   drop_na(violation_rate_percent)%>% ## change from 17356 to 15910
   drop_na(public_health_hazard_violation_rate) %>% ## actually no change
   filter(age_range != "0 YEARS - 16 YEARS")
-Childcare_center
+#Childcare_center
 ```
 # Correlation Matrix Heat Map
 ```{r}
@@ -59,7 +59,6 @@ Childcare_center
 ```
 
 
-??
 # Frequency of Violation Category for Each center
 ```{r}
 vio_freq = Childcare_center %>% 
@@ -84,14 +83,6 @@ We then want to examine whether there is connection between maximum capacity and
 
 We can conclude from the plot that there is no significant difference between the distribution of maximum capacity for each violation category. Besides, there are many outliers in each groups, which will affect our analysis results. 
 ```{r}
-Childcare_center %>% 
-  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
-  group_by(violation_category, maximum_capacity, child_care_type) %>% 
-  ggplot(aes(x = violation_category, y = maximum_capacity)) +
-  geom_violin(aes(fill = child_care_type), 
-              color = "blue", 
-              alpha = .5) +
-  theme(legend.position = "bottom") 
 
 boxplot_capacity = Childcare_center %>% 
   mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
@@ -117,7 +108,7 @@ We can see from the frequency bar chart that pre schools with larger maximum cap
 **(2). Infants/Toddlers**
 
 The frequency of violation is higher in Infants/Toddlers with larger maximum capacity; and the frequency of no violation is higher in Infants/Toddlers with smaller maximum capacity.
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(patchwork)
 
 bar_max_cap1 = Childcare_center %>% 
@@ -161,19 +152,6 @@ bar_max_cap1 + bar_max_cap2
 # The relationship between total educational workers and violation category
 As we can see, there's no significant difference between the distribution of total education workers in each violation categories.
 ```{r}
-Childcare_center %>% 
-  group_by(violation_category, total_educational_workers, child_care_type) %>% 
-  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
-  ggplot(aes(x = violation_category, y = total_educational_workers)) +
-  geom_violin(aes(fill = child_care_type), 
-              color = "blue", 
-              alpha = .5) +
-  labs(
-    x = "Violation category",
-    y = "Total educational workers",
-    color = ""
-  ) +
-  theme(legend.position = "bottom") 
 
 boxplot_worker = Childcare_center %>% 
   group_by(violation_category, total_educational_workers, child_care_type) %>% 
@@ -192,7 +170,7 @@ boxplot_worker
 ```
 # The relationship between total educational worker, maximum capacity and child care type
 As we can see, there's no significant different within each child care type. But the educational workers per child is higher in Infants/Toddlers than it is in Pre school.
-```{r}
+```{r, warning=FALSE}
 plotly_capacity_type = Childcare_center %>% 
   mutate(workers_per_child = total_educational_workers/maximum_capacity) %>% 
   group_by(workers_per_child, violation_category, child_care_type) %>% 
@@ -202,7 +180,7 @@ plotly_capacity_type
 ```
 
 # Top 10 regulation summaries of childcare center inspection
-```{r}
+```{r, , warning=FALSE, message=FALSE}
 Childcare_center %>% 
   group_by(regulation_summary) %>% 
   summarise(Frquency = n()) %>% 
@@ -212,7 +190,7 @@ Childcare_center %>%
 ```
 
 # Top 10 inspection summaries result of childcare center inspection
-```{r}
+```{r, warning=FALSE, message=FALSE}
 Childcare_center %>% 
   drop_na() %>% 
   group_by(inspection_summary_result) %>% 
