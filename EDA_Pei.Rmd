@@ -6,7 +6,7 @@ output: html_document
 ---
 
 
-```{r, warning=FALSE, message=FALSE, eval=FALSE}
+```{r setup, include=FALSE}
 library(viridis)
 options(
   ggplot2.continuous.colour = "viridis",
@@ -25,7 +25,7 @@ raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
 ```
 
 
-```{r, warning=FALSE, message=FALSE, eval=FALSE}
+```{r, warning=FALSE, message=FALSE}
 Childcare_center<-
   raw_data%>%
   janitor::clean_names() %>%
@@ -200,7 +200,7 @@ Childcare_center %>%
   knitr::kable()
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # New dataset for modelling
 childcare_model <- Childcare_center %>% 
   mutate(violation_category = ifelse( is.na(violation_category), 0, 1)) %>% # 0 is no liolation, 1 is with violation
@@ -211,7 +211,6 @@ logistic_model = childcare_model %>%
   glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
  
 
-summary(logistic_model) 
 ```
 
 ```{r}
