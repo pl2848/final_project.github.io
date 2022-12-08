@@ -1,7 +1,5 @@
 ---
-title: "Statistical_analysis_Pei"
-author: "Pei Liu"
-date: "2022-11-29"
+title: "EDA: Maximum Capacity and Total Education Worker"
 output: html_document
 ---
 
@@ -17,15 +15,31 @@ library(ggridges)
 library(dplyr)
 library(plotly)
 library(corrplot)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom",
+                                  legend.text = element_text(size = 8),
+                                  legend.title = element_text(size = 9),
+                                  legend.key.size = unit(.5,"line")))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 ```
 
 
-```{r, warning=FALSE, message=FALSE, eval=FALSE}
+```{r, include=FALSE}
 raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
 ```
 
 
-```{r, warning=FALSE, message=FALSE}
+```{r, include=FALSE}
 Childcare_center<-
   raw_data%>%
   janitor::clean_names() %>%
@@ -37,7 +51,9 @@ Childcare_center<-
   filter(age_range != "0 YEARS - 16 YEARS")
 #Childcare_center
 ```
-# Correlation Matrix Heat Map
+### Correlation Matrix Heat Map
+
+We created the correlation heat map to see the relationship between each variables that we are interested in.
 ```{r}
  Childcare_center %>% 
   select(borough, total_educational_workers, program_type, maximum_capacity, violation_category) %>%
