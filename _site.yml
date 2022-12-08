@@ -10,6 +10,12 @@ navbar:
     - icon: fa-github fa-lg
       href: http://github.com/<YOUR_GH_NAME>/
     - text: "EDA"
-      href: EDA_Pei.html
+      menu:
+      - text: "Maxium Capcity and Total Education Workers"
+        href: EDA_Pei.html
 output:
-  html_document
+  html_document:
+    theme: cosmo
+    toc : true
+    toc_float: true
+    code_folding: hide

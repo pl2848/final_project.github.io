@@ -62,7 +62,7 @@ Childcare_center
 ??
 # Frequency of Violation Category for Each center
 ```{r}
-Childcare_center %>% 
+vio_freq = Childcare_center %>% 
   group_by(violation_category, center_name) %>% 
   summarise(count = n()) %>% 
   knitr::kable()
@@ -220,5 +220,46 @@ Childcare_center %>%
   arrange(desc(Frquency)) %>% 
   top_n(10) %>% 
   knitr::kable()
+```
+
+```{r}
+# New dataset for modelling
+childcare_model <- Childcare_center %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), 0, 1)) %>% # 0 is no liolation, 1 is with violation
+  select(borough,child_care_type,total_educational_workers,maximum_capacity, violation_category)
+
+# fit logistic reg
+logistic_model = childcare_model %>% 
+  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
+ 
+
+summary(logistic_model) 
+```
+
+```{r}
+library(rsample)   # for data splitting
+
+# Modeling packages
+library(caret)     # for logistic regression modeling
+
+# Model interpretability packages
+library(vip)       # variable importance
+
+
+childcare_split <- initial_split(childcare_model, prop = .7)
+childcare_train <- training(childcare_split)
+childcare_test  <- testing(childcare_split)
+
+set.seed(123)
+
+
+summary(logistic_model) 
+
+# predict violation using model
+logistics_predict = predict(logistic_model, childcare_model, type = 'response')
+# convert predicted value to TRUE/FALSE
+childcare_model$predict_violation = ifelse(logistics_predict >= .5, "True", "False")
+# determine accuracy of the model
+
 ```
 
