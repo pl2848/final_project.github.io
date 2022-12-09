@@ -406,11 +406,10 @@ class="section level3">
 <h3>Chi-Square test - Borough vs Violation Category</h3>
 <p>program type and violation category to test the association between
 the two variables.</p>
-<p>H0:There is no association between program type and violation
-category H1:There is association between program type and violation
-category</p>
-<p>There is significant relationship between program type and violation
-category suggested by the computed p-value much lower than 0.05</p>
+<p><strong>H0:There is no association between program type and violation
+category</strong></p>
+<p><strong>H1:There is association between program type and violation
+category</strong></p>
 <pre class="r"><code>tbl1=table(Childcare_center$borough,Childcare_center$violation_category)
 chisq.test(tbl1)</code></pre>
 <pre><code>## 
@@ -439,18 +438,18 @@ chisq.test(tbl1)</code></pre>
 </tr>
 </tbody>
 </table>
+<p>There is significant relationship between program type and violation
+category suggested by the computed p-value much lower than 0.05</p>
 </div>
 <div id="chi-square-test---program-types-vs-violation-category"
 class="section level3">
 <h3>Chi-Square test - Program Types vs Violation Category</h3>
 <p>We conducted a chi-squared test between childcare type and violation
 category to test the association between the two variables.</p>
-<p>H0:There is no association between childcare type and violation
-category H1:There is association between childcare type and violation
-category</p>
-<p>There is significant relationship between childcare type and
-violation category suggested by the computed p-value much lower than
-0.05</p>
+<p><strong>H0:There is no association between childcare type and
+violation category</strong></p>
+<p><strong>H1:There is association between childcare type and violation
+category</strong></p>
 <pre class="r"><code>tbl2=table(Childcare_center$child_care_type,Childcare_center$violation_category)
 
 chisq.test(tbl2)</code></pre>
@@ -480,6 +479,9 @@ chisq.test(tbl2)</code></pre>
 </tr>
 </tbody>
 </table>
+<p>There is significant relationship between childcare type and
+violation category suggested by the computed p-value much lower than
+0.05</p>
 </div>
 <div id="anova-test---borough-and-violation" class="section level3">
 <h3>ANOVA Test - Borough and Violation</h3>
@@ -694,23 +696,23 @@ confusionMatrix(data=confusion_data$predict_violation, reference = confusion_dat
 <tbody>
 <tr class="odd">
 <td align="left">accuracy</td>
-<td align="right">0.6167247</td>
+<td align="right">0.6264808</td>
 </tr>
 <tr class="even">
 <td align="left">kappa</td>
-<td align="right">0.2304475</td>
+<td align="right">0.2513529</td>
 </tr>
 <tr class="odd">
 <td align="left">sensitivity</td>
-<td align="right">0.5900099</td>
+<td align="right">0.6117647</td>
 </tr>
 <tr class="even">
 <td align="left">specificity</td>
-<td align="right">0.6403855</td>
+<td align="right">0.6397351</td>
 </tr>
 <tr class="odd">
 <td align="left">f1</td>
-<td align="right">0.5911794</td>
+<td align="right">0.6081871</td>
 </tr>
 </tbody>
 </table>

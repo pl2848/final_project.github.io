@@ -57,10 +57,11 @@ Childcare_center %>%
   ggplot(aes(fill =violation_category, x=age_range,y = n))+
   geom_bar(position = "dodge", stat = "identity")
 ```
+Age range is the same as the program type violation.(graph below)
 
 ### Program Type vs Violation Category
 
-Age range is the same as the program type violation.(graph below)
+
 ```{r}
 Childcare_center %>% 
   group_by(program_type) %>% 

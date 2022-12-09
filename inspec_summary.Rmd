@@ -102,17 +102,6 @@ Childcare_center %>%
   knitr::kable()
 ```
 
-### Top 10 inspection summaries result of childcare center inspection
-```{r, warning=FALSE, message=FALSE}
-Childcare_center %>% 
-  drop_na() %>% 
-  group_by(inspection_summary_result) %>% 
-  summarise(Frquency = n()) %>% 
-  arrange(desc(Frquency)) %>% 
-  top_n(10) %>% 
-  knitr::kable()
-```
-
 
 ### Correlation Matrix Heat Map
 
