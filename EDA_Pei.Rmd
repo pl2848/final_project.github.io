@@ -252,10 +252,6 @@ summary(logistic_model)
 ```
 
 
-```{r}
-anova(Chil)
-```
-
 
 ```{r}
 library(rsample)   # for data splitting
