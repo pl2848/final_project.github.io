@@ -1,0 +1,124 @@
+---
+title: "age_range & program_type"
+output: github_document
+date: "2022-11-28"
+---
+
+```{r}
+library(tidyverse)
+library(patchwork)
+library(plotly)
+library(haven)
+```
+
+```{r}
+raw_data = read_csv(file="/DOHMH_Childcare_Center_Inspections.csv")
+```
+
+```{r}
+Childcare_center = raw_data%>%
+  janitor::clean_names() %>%
+  filter(status=="Permitted")%>%
+  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+         -day_care_id,-url,-date_permitted,-actual)%>%
+  drop_na(violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate, violation_status, age_range) %>% 
+  filter(age_range != "0 YEARS - 16 YEARS", program_type !="CAMP") %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category))
+
+Childcare_center
+```
+
+
+```{r}
+Childcare_center %>% 
+  select(age_range, violation_category) %>% 
+  filter(age_range == "2 YEARS - 5 YEARS") 
+```
+
+```{r}
+Childcare_center %>% 
+  group_by(age_range) %>% 
+  count(violation_category) %>% 
+  ggplot(aes(fill =violation_category, x=age_range,y = n))+
+  geom_bar(position = "dodge", stat = "identity")
+```
+
+```{r}
+Childcare_center %>% 
+  group_by(program_type) %>% 
+  count(violation_category) %>% 
+  ggplot(aes(fill =violation_category, x=program_type,y = n))+
+  geom_bar(position = "dodge", stat = "identity")
+```
+
+```{r}
+Childcare_center %>% 
+  group_by(borough, age_range) %>% 
+  count(violation_category) %>% 
+  ggplot(aes(fill =violation_category, x=borough,y = n))+
+  geom_bar(position = "dodge", stat = "identity")
+```
+
+```{r}
+# try
+try = Childcare_center %>% 
+  select(borough,program_type,violation_category)%>%
+  filter(program_type!="CAMP")%>%
+  group_by(borough, program_type,violation_category) %>% 
+  summarise(
+    n_obs=n())%>%
+  ggplot(aes(x = borough, y = n_obs, fill = violation_category))+
+  geom_bar(stat="identity", width = 0.5, position = "dodge")+
+  facet_grid(. ~ program_type) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplotly(try) 
+```
+The graph above is showing the relationship between borough and the number of violation category count. The borough can separate the five parts "Bronx", "Brooklyn", "Manhattan", "Staten Island" and "Queens". Violation category "Critical", "General", "No Violation" and "Public Helath Hazard".
+```{r}
+Childcare_center %>% 
+  group_by(borough) %>% 
+  count(violation_category) %>% 
+  ggplot(aes(fill =violation_category, x=borough,y = n))+
+  geom_bar(position = "dodge", stat = "identity")
+```
+
+
+
+```{r}
+# words descript the age-range and program type relationship
+# Infant school is for 0-2 years kids and preschool is for 0-5 years kids.
+age = Childcare_center %>%
+  group_by(age_range) %>%
+  select(age_range,violation_category) %>%
+  ggplot(aes(x=age_range,y=violation_category))+
+  geom_density(aes(fill = age_range), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+age
+```
+
+
+
+
+```{r}
+clean = Childcare_center %>% 
+  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %>%
+  group_by(borough, program_type,total_educational_workers) %>% 
+  count(violation_category)
+
+fit = lm(n~ borough+program_type+total_educational_workers, data = clean)
+anova(fit)
+```
+
+```{r}
+clean2 = Childcare_center %>% 
+  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %>%
+  group_by(program_type) %>% 
+  count(violation_category)
+
+fit = lm(n~ program_type, data = clean2)
+anova(fit) %>% 
+  knitr::kable(caption = "Two way anova of violation frequency and month")
+```
+

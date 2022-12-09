@@ -11,8 +11,12 @@ navbar:
       href: http://github.com/<YOUR_GH_NAME>/
     - text: "EDA"
       menu:
+      - text: "Age Range and Program Type"
+        href: age_range_and_program_type.html
       - text: "Maxium Capcity and Total Education Workers"
         href: EDA_Pei.html
+    - text: "Statistical Analysis"
+      href: statistical_analysis.html
 output:
   html_document:
     theme: cosmo

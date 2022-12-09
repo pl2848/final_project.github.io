@@ -1,0 +1,177 @@
+---
+title: "Statistical Analysis"
+output: html_document
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(viridis)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+library(tidyverse)
+library(ggridges)
+library(dplyr)
+library(plotly)
+
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom",
+                                  legend.text = element_text(size = 8),
+                                  legend.title = element_text(size = 9),
+                                  legend.key.size = unit(.5,"line")))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+```{r, include=FALSE}
+raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
+```
+
+
+```{r, include=FALSE}
+Childcare_center<-
+  raw_data%>%
+  janitor::clean_names() %>%
+  filter(status=="Permitted")%>%
+  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+         -day_care_id,-url,-date_permitted,-actual)%>%
+  drop_na(violation_rate_percent)%>% ## change from 17356 to 15910
+  drop_na(public_health_hazard_violation_rate) %>% ## actually no change
+  filter(age_range != "0 YEARS - 16 YEARS")
+#Childcare_center
+```
+
+### Chi-Square test - Borough
+
+```{r, warning=FALSE, message=FALSE}
+tbl1=table(Childcare_center$borough,Childcare_center$violation_category)
+tbl
+chisq.test(tbl1)%>% 
+  broom::tidy()%>% 
+  knitr::kable()
+```
+
+### Chi-Square test - Program Types
+```{r, warning=FALSE, message=FALSE}
+tbl2=table(Childcare_center$child_care_type,Childcare_center$violation_category)
+tbl2
+chisq.test(tbl2) %>% 
+  broom::tidy() %>% 
+  knitr::kable()
+```
+
+### ANOVA Test - Borough and Violation
+
+ We want to examining the relationship between the mean of total violation event (GENERAL+CRITICAL+PUBLIC HEALTH HAZARD) and borough. The frequency of violation events were separated by five boroughs (Manhattan, Brooklyn, Queens, Staten Island, Bronx).  
+
+
+**H0: The mean of violation are not different across borough**
+
+**H1: The mean of violation are different across borough**
+```{r}
+clean_1 = children_center<-
+  raw_data%>%
+  janitor::clean_names()%>%
+  mutate(
+    center_name=tolower(center_name),
+    center_name=gsub('[[:punct:] ]+',' ',center_name),
+    center_name=gsub(" ","",center_name),
+    center_name=gsub("llc","",center_name),
+    center_name=gsub("inc","",center_name),
+    center_name=gsub("th","",center_name),
+    center_name=gsub("school","",center_name),
+    center_name=gsub("center","",center_name),
+    center_name=gsub("ctr","",center_name)
+  )%>%
+  filter(status=="Permitted") %>% 
+  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %>%
+   filter(violation_category != "NO VIOLATION") %>% 
+  mutate(violation_category = "VIOLATION") %>% 
+  group_by(center_name,borough) %>% 
+  count() 
+
+
+fit = lm(n~ borough, data = clean_1)
+anova(fit) %>% 
+  knitr::kable(caption = "One way anova of Violation frequency and Brough")
+```
+The p-value is very small(p<0.05). We reject the null hypothesis and saying that there is enough evidence the mean of violation are **different across borough**. 
+
+
+### Logistic Regression
+To predict whether a childcare facility will violate or not, we fit the data to a logistic regression model. 
+
+
+Our model is shown below:
+```{r, warning=FALSE, message=FALSE}
+# New dataset for modelling
+childcare_model <- Childcare_center %>% 
+  mutate(violation_category = ifelse(is.na(violation_category), 0, 1),
+         borough = as.factor(borough)) %>% # 0 is no liolation, 1 is with violation
+  select(borough,child_care_type,total_educational_workers,maximum_capacity, violation_category)
+
+# fit logistic reg
+logistic_model = childcare_model %>% 
+  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) %>% 
+  broom::tidy() %>% 
+  knitr::kable(caption = "Effect of Predictors on Violation Status")
+
+logistic_model
+```
+As we can see in the summary, all predictors are significant with p value < 0.01, suggesting association with violation status. Different borough has different coefficients, suggesting regional difference in violation status. The odds of violation for childcare center in Bronx is 0.469, holding all other variables constant.For each of the other borough, the coefficient tells us that the log-odds of violation for a given group is smaller than that of the reference group.
+
+I also used a simple method to test our model accuracy.Firstly, I split our dataset to training and testing dataset, and then fit the model using the training data, and test for accuracy using testing data. Lastly, I used confusion matrix to access our logistic model.
+
+```{r, warning=FALSE, message=FALSE}
+library(rsample)   # for data splitting
+
+# Modeling packages
+library(caret)     # for logistic regression modeling
+
+# Model interpretability packages
+library(vip)       # variable importance
+
+
+childcare_split <- initial_split(childcare_model, prop = .7)
+childcare_train <- training(childcare_split)
+childcare_test  <- testing(childcare_split)
+
+set.seed(123)
+
+# predict violation using model
+# fit logistic reg
+logistic_model_train = childcare_train %>% 
+  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
+
+logistics_predict = predict(logistic_model_train, childcare_test, type = 'response')
+# convert predicted value to TRUE/FALSE
+childcare_test$predict_violation = ifelse(logistics_predict >= .5, 1, 0)
+
+# Used confusion matrix to measure model performance
+confusion_data = childcare_test %>% 
+  select(predict_violation, violation_category) %>% 
+  mutate(predict_violation = as.factor(predict_violation), violation_category = as.factor(violation_category))
+confusionMatrix(data=confusion_data$predict_violation, reference = confusion_data$violation_category) %>% 
+  broom::tidy() %>% 
+  select(term, estimate) %>% 
+  filter(term %in% c("accuracy", "kappa", "sensitivity", "specificity", "f1")) %>% 
+  knitr::kable(caption = "Measuring Model Performance ")
+
+```
+
+It turns out that our model has accuracy rate of 62%, with Kappa coefficient at around 0.24. This means that the predictability of our model is relatively week. But the significance of our predictors indicating that borough, childcare types and maximum capacity are all associated with violation. The reason behind regional disparities in violation should be investigated in the future.
+
+
+The main reason for our weak predictability is that we lack of essential predictors for the model. Combined with the top 10 violation summary we analyzed before, useful information may include: hours of training, celling and floor maintance frequecny, stuff medical clearance status, etc.
