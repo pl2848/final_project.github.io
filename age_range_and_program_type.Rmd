@@ -1,6 +1,6 @@
 ---
 title: "Age Range and Program Type"
-output: github_document
+output: himl_document
 date: "2022-11-28"
 ---
 

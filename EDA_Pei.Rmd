@@ -77,10 +77,29 @@ We created the correlation heat map to see the relationship between each variabl
 
 # Frequency of Violation Category for Each center
 ```{r}
-vio_freq = Childcare_center %>% 
-  group_by(violation_category, center_name) %>% 
-  summarise(count = n()) %>% 
+ 
+children_center_name<-
+  raw_data%>%
+  janitor::clean_names()%>%
+  mutate(
+    legal_name=tolower(legal_name),
+    legal_name=gsub('[[:punct:] ]+',' ',legal_name),
+    legal_name=gsub(" ","",legal_name),
+    legal_name=gsub("llc","",legal_name),
+    legal_name=gsub("inc","",legal_name),
+    legal_name=gsub("th","",legal_name),
+    legal_name=gsub("school","",legal_name),
+    legal_name=gsub("center","",legal_name),
+    legal_name=gsub("ctr","",legal_name)
+  )%>%
+  select(legal_name, violation_category)%>%
+  group_by(legal_name)%>%
+  summarise(
+    Frequency=n()
+  )%>% 
+  arrange(desc(Frequency)) %>% 
   knitr::kable()
+children_center_name
 ```
 
 
@@ -196,7 +215,7 @@ plotly_capacity_type
 ```
 
 # Top 10 regulation summaries of childcare center inspection
-```{r, , warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE}
 Childcare_center %>% 
   group_by(regulation_summary) %>% 
   summarise(Frquency = n()) %>% 
@@ -216,18 +235,27 @@ Childcare_center %>%
   knitr::kable()
 ```
 
+
+# added plot
 ```{r, warning=FALSE, message=FALSE}
 # New dataset for modelling
 childcare_model <- Childcare_center %>% 
-  mutate(violation_category = ifelse( is.na(violation_category), 0, 1)) %>% # 0 is no liolation, 1 is with violation
+  mutate(violation_category = ifelse(violation_category == "NO VIOLATION", 0, 1),
+         borough = as.factor(borough)) %>% # 0 is no liolation, 1 is with violation
   select(borough,child_care_type,total_educational_workers,maximum_capacity, violation_category)
 
 # fit logistic reg
 logistic_model = childcare_model %>% 
   glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
- 
 
+summary(logistic_model)
 ```
+
+
+```{r}
+anova(Chil)
+```
+
 
 ```{r}
 library(rsample)   # for data splitting
@@ -245,14 +273,32 @@ childcare_test  <- testing(childcare_split)
 
 set.seed(123)
 
-
-summary(logistic_model) 
-
 # predict violation using model
-logistics_predict = predict(logistic_model, childcare_model, type = 'response')
-# convert predicted value to TRUE/FALSE
-childcare_model$predict_violation = ifelse(logistics_predict >= .5, "True", "False")
-# determine accuracy of the model
+# fit logistic reg
+logistic_model_train = childcare_train %>% 
+  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
 
+logistics_predict = predict(logistic_model_train, childcare_test, type = 'response')
+# convert predicted value to TRUE/FALSE
+childcare_test$predict_violation = ifelse(logistics_predict >= .5, 1, 0)
+
+# determine accuracy of the model
+accuracy = mean(childcare_test$predict_violation == childcare_test$violation_category)
+accuracy
 ```
+
+```{r}
+tbl1=table(Childcare_center$program_type,Childcare_center$violation_category)
+tbl
+chisq.test(tbl1)
+summary(chisq.test(tbl1))
+```
+
+```{r}
+tbl2=table(Childcare_center$child_care_type,Childcare_center$violation_category)
+tbl2
+chisq.test(tbl2)
+```
+
+
 
