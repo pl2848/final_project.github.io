@@ -13,6 +13,15 @@ Nowadays, children care center become a worldwide popular topic by the working p
 
 <img src="./data/Introduction_pic.jpg" style="width:100%">
 
+One of the most difficult choices parents face is who will take care of their little ones when they are unable to do so. It is stressful to imagine leaving your little one in the hands of a stranger every day. This is why parents should be so careful when choosing the right child care center for their family. They want to provide their child with a comfortable, safe and enjoyable environment that also stimulates and motivates their child's social, mental and physical development. The opportunity for safe and healthy growth is very important to many parents, so our project analyzes the violation records of child care centers in different areas of New York to provide more information to parents to assist you in finding quality child care centers for your little one sooner!
+
+<iframe width="840" height="472.5" src="https://www.youtube.com/watch?v=y1J9ode3Gxs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Finding an affordable and qualified children care center is necessary for New York’s Parents. What is the future of the Child Care?
+
+<iframe width="840" height="472.5" src="https://www.youtube.com/watch?v=EJIkdVR_3Fk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
 ## Screencast
 
 <iframe width="840" height="472.5" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -45,9 +54,9 @@ In Mapping tab, you will find:
 
 ## Collaborators
 
-Shuting Kang 
+Shuting Kang (sk5152)
 
-Wenjun Mo 
+Wenjun Mo ()
 
 Keming Zhan 
 

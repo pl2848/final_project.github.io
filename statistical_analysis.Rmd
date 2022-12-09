@@ -53,20 +53,37 @@ Childcare_center<-
 #Childcare_center
 ```
 
-### Chi-Square test - Borough
+### Chi-Square test - Borough vs Violation Category
+program type and violation category to test the association between the two variables. 
+
+H0:There is no association between program type and violation category
+H1:There is  association between program type and violation category
+
+
+There is significant relationship between program type and violation category suggested by the computed p-value much lower than 0.05
 
 ```{r, warning=FALSE, message=FALSE}
 tbl1=table(Childcare_center$borough,Childcare_center$violation_category)
-tbl
+chisq.test(tbl1)
+
 chisq.test(tbl1)%>% 
-  broom::tidy()%>% 
+  broom::tidy() %>% 
   knitr::kable()
 ```
 
-### Chi-Square test - Program Types
+### Chi-Square test - Program Types vs Violation Category
+We conducted a chi-squared test between childcare type and violation category to test the association between the two variables. 
+
+H0:There is no association between childcare type and violation category
+H1:There is  association between childcare type and violation category
+
+
+There is significant relationship between childcare type and violation category suggested by the computed p-value much lower than 0.05
 ```{r, warning=FALSE, message=FALSE}
 tbl2=table(Childcare_center$child_care_type,Childcare_center$violation_category)
-tbl2
+
+chisq.test(tbl2)
+
 chisq.test(tbl2) %>% 
   broom::tidy() %>% 
   knitr::kable()

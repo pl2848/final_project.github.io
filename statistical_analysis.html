@@ -401,18 +401,25 @@ div.tocify {
 </div>
 
 
-<div id="chi-square-test---borough" class="section level3">
-<h3>Chi-Square test - Borough</h3>
+<div id="chi-square-test---borough-vs-violation-category"
+class="section level3">
+<h3>Chi-Square test - Borough vs Violation Category</h3>
+<p>program type and violation category to test the association between
+the two variables.</p>
+<p>H0:There is no association between program type and violation
+category H1:There is association between program type and violation
+category</p>
+<p>There is significant relationship between program type and violation
+category suggested by the computed p-value much lower than 0.05</p>
 <pre class="r"><code>tbl1=table(Childcare_center$borough,Childcare_center$violation_category)
-tbl</code></pre>
-<pre><code>## function (src, ...) 
-## {
-##     UseMethod(&quot;tbl&quot;)
-## }
-## &lt;bytecode: 0x7fefe24d3700&gt;
-## &lt;environment: namespace:dplyr&gt;</code></pre>
+chisq.test(tbl1)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test
+## 
+## data:  tbl1
+## X-squared = 134.57, df = 8, p-value &lt; 2.2e-16</code></pre>
 <pre class="r"><code>chisq.test(tbl1)%&gt;% 
-  broom::tidy()%&gt;% 
+  broom::tidy() %&gt;% 
   knitr::kable()</code></pre>
 <table>
 <thead>
@@ -433,14 +440,25 @@ tbl</code></pre>
 </tbody>
 </table>
 </div>
-<div id="chi-square-test---program-types" class="section level3">
-<h3>Chi-Square test - Program Types</h3>
+<div id="chi-square-test---program-types-vs-violation-category"
+class="section level3">
+<h3>Chi-Square test - Program Types vs Violation Category</h3>
+<p>We conducted a chi-squared test between childcare type and violation
+category to test the association between the two variables.</p>
+<p>H0:There is no association between childcare type and violation
+category H1:There is association between childcare type and violation
+category</p>
+<p>There is significant relationship between childcare type and
+violation category suggested by the computed p-value much lower than
+0.05</p>
 <pre class="r"><code>tbl2=table(Childcare_center$child_care_type,Childcare_center$violation_category)
-tbl2</code></pre>
-<pre><code>##                                
-##                                 CRITICAL GENERAL PUBLIC HEALTH HAZARD
-##   Child Care - Infants/Toddlers      472     508                  188
-##   Child Care - Pre School           2470    3252                  681</code></pre>
+
+chisq.test(tbl2)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test
+## 
+## data:  tbl2
+## X-squared = 37.101, df = 2, p-value = 8.781e-09</code></pre>
 <pre class="r"><code>chisq.test(tbl2) %&gt;% 
   broom::tidy() %&gt;% 
   knitr::kable()</code></pre>
@@ -676,23 +694,23 @@ confusionMatrix(data=confusion_data$predict_violation, reference = confusion_dat
 <tbody>
 <tr class="odd">
 <td align="left">accuracy</td>
-<td align="right">0.6162602</td>
+<td align="right">0.6269454</td>
 </tr>
 <tr class="even">
 <td align="left">kappa</td>
-<td align="right">0.2308810</td>
+<td align="right">0.2511156</td>
 </tr>
 <tr class="odd">
 <td align="left">sensitivity</td>
-<td align="right">0.5962099</td>
+<td align="right">0.5842207</td>
 </tr>
 <tr class="even">
 <td align="left">specificity</td>
-<td align="right">0.6346239</td>
+<td align="right">0.6663689</td>
 </tr>
 <tr class="odd">
 <td align="left">f1</td>
-<td align="right">0.5976620</td>
+<td align="right">0.6004975</td>
 </tr>
 </tbody>
 </table>

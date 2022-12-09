@@ -17,13 +17,15 @@ raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
 
 
 ### Data Processing
-filter the variables to include currently permitted Children Care Center
+Filter the variables to include currently permitted Children Care Center
+
 Question: should we consider permitted (17356) or permitted+ active (3399)(school)
 
 step1:filter the inspection record for only currently permitted Children Care Center
+
 step2:remove the useless variables: legal_name, building, street, phone, permit_number, permid_expiration, day care id, url, date_permitted, actual.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 Childcare_center<-
   raw_data%>%
   janitor::clean_names() %>%
@@ -114,7 +116,7 @@ Childcare_center %>%
 
 ### Correlation Matrix Heat Map
 
-We created the correlation heat map to see the relationship between each variables that we are interested in. We can see that borough seems to have positive association with violation, while total educational workers, maximum capacity and program type have nagetive association. We will focus on exploring the relationship between these variables in the follwing analysis.
+We created the correlation heat map to see the relationship between each variables that we are interested in. We can see that borough seems to have positive association with violation, while total educational workers, maximum capacity and program type have negative association. We will focus on exploring the relationship between these variables in the following analysis.
 ```{r}
  Childcare_center %>% 
   select(borough, total_educational_workers, program_type, maximum_capacity, violation_category) %>%

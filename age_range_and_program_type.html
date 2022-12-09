@@ -10,7 +10,6 @@
 
 
 
-<meta name="date" content="2022-11-28" />
 
 <title>Age Range and Program Type</title>
 
@@ -398,21 +397,22 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Age Range and Program Type</h1>
-<h4 class="date">2022-11-28</h4>
 
 </div>
 
 
-<div id="age-range" class="section level3">
-<h3>Age Range</h3>
+<div id="age-range-vs-violation-category" class="section level3">
+<h3>Age Range vs Violation Category</h3>
 <pre class="r"><code>Childcare_center %&gt;% 
   group_by(age_range) %&gt;% 
   count(violation_category) %&gt;% 
   ggplot(aes(fill =violation_category, x=age_range,y = n))+
   geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)</code></pre>
-<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-4-1.png" width="672" />
-### Program Type Age range is the same as the program type
-violation.(graph below)</p>
+<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="program-type-vs-violation-category" class="section level3">
+<h3>Program Type vs Violation Category</h3>
+<p>Age range is the same as the program type violation.(graph below)</p>
 <pre class="r"><code>Childcare_center %&gt;% 
   group_by(program_type) %&gt;% 
   count(violation_category) %&gt;% 

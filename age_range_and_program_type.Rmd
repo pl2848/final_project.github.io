@@ -1,7 +1,6 @@
 ---
 title: "Age Range and Program Type"
 output: html_document
-date: "2022-11-28"
 ---
 
 ```{r setup, include=FALSE}
@@ -9,6 +8,21 @@ library(tidyverse)
 library(patchwork)
 library(plotly)
 library(haven)
+library(viridis)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom",
+                                  legend.text = element_text(size = 8),
+                                  legend.title = element_text(size = 9),
+                                  legend.key.size = unit(.5,"line")))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 ```
 
 ```{r, include = FALSE}
@@ -35,7 +49,7 @@ Childcare_center %>%
   filter(age_range == "2 YEARS - 5 YEARS") 
 ```
 
-### Age Range
+### Age Range vs Violation Category
 ```{r}
 Childcare_center %>% 
   group_by(age_range) %>% 
@@ -43,7 +57,9 @@ Childcare_center %>%
   ggplot(aes(fill =violation_category, x=age_range,y = n))+
   geom_bar(position = "dodge", stat = "identity")
 ```
-### Program Type
+
+### Program Type vs Violation Category
+
 Age range is the same as the program type violation.(graph below)
 ```{r}
 Childcare_center %>% 

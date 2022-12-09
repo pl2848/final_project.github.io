@@ -24,10 +24,10 @@ Childcare_center<-
   filter(age_range != "0 YEARS - 16 YEARS")
 ```
 
-### borough vs. inspection summary result 
+### Borough vs. Inspection summary result 
 
 We examined the inspection categories of child care centers in different areas of New York that had records of violations，We found that the categories of inspection are divided into four major categories, which are Compliance Inspection of Open Violations, Initial Annual Inspection, Lead Based Paint or Lead in Water Inspection, Monitoring Inspection Non-Routine.
-```{r}
+```{r, warning=FALSE, message=FALSE}
 borough_inspec_summmary<-
   Childcare_center%>%
   select(borough,inspection_summary_result)%>%
@@ -48,14 +48,16 @@ head(borough_inspec_summmary)
 
 To better examine the number of violations in different types of inspections at child care centers in different borough of New York, we categorized and summarise the records of violation inspections by borough and type of inspection.
 
-### borough group by general_category
-```{r}
+### Borough group by General Category
+```{r, warning=FALSE, message=FALSE}
 borough_inspec_general_sumary<-
   borough_inspec_summmary%>%
   group_by(borough,general_category)%>%
   summarise(
     n_obs=sum(n_obs)
-  )
+  ) %>% 
+  arrange(desc(n_obs))%>% 
+  knitr::kable()
 borough_inspec_general_sumary
 ```
 
@@ -72,7 +74,7 @@ borough_inspec_general_sumary_plot_all<-
 ggplotly(borough_inspec_general_sumary_plot_all)
 ```
 
-### general type vs borough
+### General Type vs Borough
 
 ```{r, warning=FALSE, message=FALSE}
 inspec_general_borough_sumary<-
@@ -80,7 +82,9 @@ borough_inspec_summmary%>%
 group_by(general_category,borough)%>%
 summarise(
 n_obs=sum(n_obs)
-)
+) %>% 
+  arrange(desc(n_obs)) %>% 
+  knitr::kable()
 inspec_general_borough_sumary
 ```
 
@@ -108,7 +112,7 @@ Childcare_center %>%
 
 The graph above showing the relationship between the borough and the cases of violation in each category. From the grpah we can see, queens is the borough whihc has the most violation cases in all three categories and staten island has the least violation cases in all three categories. And in Brooklyn, it has the highest no violation cases. 
 
-```{r}
+```{r, warning=FALSE, message=FALSE }
 # try
 try = Childcare_center %>% 
   mutate(violation_category = ifelse(is.na(violation_category), "NO VIOLATION", violation_category)) %>%
@@ -121,7 +125,7 @@ try = Childcare_center %>%
   geom_bar(stat="identity", width = 0.5, position = "dodge")+
   facet_grid(. ~ program_type) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 90))
+  theme(axis.text.x = element_text(angle = 28),axis.text = element_text(size = 5))
 
 ggplotly(try) 
 ```
