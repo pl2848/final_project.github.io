@@ -68,7 +68,7 @@ borough_inspec_general_sumary_plot_all<-
   ggplot(aes(x=general_category,y=n_obs),)+
   geom_bar(aes(fill = borough), stat = "identity")+
   theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
-  labs(y="number of violations",title="Inspection categories vs. borough",x="inspection categories")
+  labs(y="number of violations",title="Inspection categories vs. Borough",x="inspection categories")
   
 ggplotly(borough_inspec_general_sumary_plot_all)
 ```
@@ -93,7 +93,7 @@ inspec_general_borough_sumary%>%
 ggplot(aes(x=borough,y=n_obs))+
 geom_bar(aes(fill=general_category),stat = "identity")+
 theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
-  labs(y="number of violations",title="borough vs.Inspection categories",x="borough")
+  labs(y="number of violations",title="Borough vs.Inspection categories",x="borough")
   
 ggplotly(violation_borough_sumary_all)
 ```

@@ -137,7 +137,9 @@ bar_max_cap1 + bar_max_cap2
 # arrange
 ```
 
+
 ### The relationship between total educational workers and violation category
+
 As we can see, there's no significant difference between the distribution of total education workers in each violation categories.
 ```{r}
 
@@ -157,6 +159,7 @@ boxplot_worker
 
 ```
 ### The relationship between total educational worker, maximum capacity and child care type
+
 As we can see, there's no significant different within each child care type. But the educational workers per child is higher in Infants/Toddlers than it is in Pre school.
 ```{r, warning=FALSE}
 plotly_capacity_type = Childcare_center %>% 

@@ -7,11 +7,12 @@ output:
     theme: cosmo
 ---
 
-## Introduction:
+# Project Motivation:
 
 Nowadays, children care center become a worldwide popular topic by the working parents increasing. Most people choose to put their child to the children care center during their working time. In a high demand of request, choosing a safe and healthy children care environment is important.  However, some children care center still has the severe food safety and cooking environment problems which NYC government determine them as violation according to their severe level. In our research, we try to investigate the cafeteria violation in children care center in NYC using the NYC Open data set. 
 
 <img src="./data/Introduction_pic.jpg" style="width:100%">
+*Image from NCY Health*
 
 One of the most difficult choices parents face is who will take care of their little ones when they are unable to do so. It is stressful to imagine leaving your little one in the hands of a stranger every day. This is why parents should be so careful when choosing the right child care center for their family. They want to provide their child with a comfortable, safe and enjoyable environment that also stimulates and motivates their child's social, mental and physical development. The opportunity for safe and healthy growth is very important to many parents, so our project analyzes the violation records of child care centers in different areas of New York to provide more information to parents to assist you in finding quality child care centers for your little one sooner!
 
@@ -22,14 +23,14 @@ Finding an affordable and qualified children care center is necessary for New Yo
 <iframe width="560" height="315" src="https://www.youtube.com/embed/EJIkdVR_3Fk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
-## Screencast
+# Screencast
 
 <iframe width="840" height="472.5" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-## Website Overview
+# Website Overview
 In the exploratory analyses section, you will find:
 
-* Overview of Childcare Center Violation
+* Overview of Violation Summary
 
 * Violation vs Borough
 
