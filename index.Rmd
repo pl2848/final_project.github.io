@@ -1,12 +1,54 @@
 ---
-title: "My awesome website"
+title: "P8105 Final Project"
 output: 
   html_document:
     toc: true
     toc_float: true
-    theme: cerulean
+    theme: cosmo
 ---
 
-# This is our final project
+## Introduction:
 
-![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)
+Nowadays, children care center become a worldwide popular topic by the working parents increasing. Most people choose to put their child to the children care center during their working time. In a high demand of request, choosing a safe and healthy children care environment is important.  However, some children care center still has the severe food safety and cooking environment problems which NYC government determine them as violation according to their severe level. In our research, we try to investigate the cafeteria violation in children care center in NYC using the NYC Open data set. 
+
+<img src="./data/Introduction_pic.jpg" style="width:100%">
+
+## Screencast
+
+<iframe width="840" height="472.5" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+## Website Overview
+In the exploratory analyses section, you will find:
+
+* Overview of Childcare Center Violation
+
+* Violation vs Borough
+
+* Violation vs Age Range / Program Type
+
+* Violation vs Maiximum Capacity & Total Educational Workers
+
+
+In the statistical analyses tab, you will find:
+
+* Anova Test - Whether Borough is associated with Childcare center violations
+
+* Chi-squared Test - Whether the violation categories vary among boroughs
+
+* Chi-squared Test - Whether the violation categories vary among childcare types
+
+* Logistic Regression Model - Predict whether a childcare center will violate or not
+
+In Mapping tab, you will find:
+
+* Mapping of Childcare Center by Zipcood with Violation Frequency 
+
+## Collaborators
+
+Shuting Kang 
+
+Wenjun Mo 
+
+Keming Zhan 
+
+Pei Liu (pl2848)

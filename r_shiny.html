@@ -345,6 +345,9 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="inspec_summary.html">Inspection Summary</a>
+    </li>
+    <li>
       <a href="borough_eda.html">Borough vs Violation</a>
     </li>
     <li>
@@ -360,6 +363,9 @@ div.tocify {
 </li>
 <li>
   <a href="map.html">Map</a>
+</li>
+<li>
+  <a href="final_report.html">Final Report</a>
 </li>
 <li>
   <a href="mailto:&lt;you@youremail.com&gt;">
@@ -398,7 +404,7 @@ div.tocify {
 <pre class="r"><code>raw_data&lt;-read_csv(file=&quot;./data/DOHMH_Childcare_Center_Inspections .csv&quot;)</code></pre>
 <pre><code>## Warning: One or more parsing issues, see `problems()` for details</code></pre>
 <pre><code>## Rows: 26397 Columns: 34
-## ── Column specification ────────────────────────────────────────────────────────
+## ── Column specification ──────────────────────
 ## Delimiter: &quot;,&quot;
 ## chr (23): Center Name, Legal Name, Building, Street, Borough, Phone, Permit ...
 ## dbl (11): ZipCode, Maximum Capacity, Building Identification Number, Violati...
@@ -429,7 +435,8 @@ borough_inspec_summmary&lt;-
       inspection_summary_result %like% &quot;^Lead Based Paint or Lead in Water Inspection&quot; ~&quot;Lead Based Paint or Lead in Water Inspection&quot;,
       inspection_summary_result %like% &quot;^Monitoring Inspection Non-Routine&quot; ~&quot;Monitoring Inspection Non-Routine&quot;)
   )</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;borough&#39;. You can override using the
+<pre><code>## `summarise()` has grouped output by
+## &#39;borough&#39;. You can override using the
 ## `.groups` argument.</code></pre>
 <pre class="r"><code>borough_inspec_general_sumary&lt;-
   borough_inspec_summmary%&gt;%
@@ -437,7 +444,8 @@ borough_inspec_summmary&lt;-
   summarise(
     n_obs=sum(n_obs)
   )</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;borough&#39;. You can override using the
+<pre><code>## `summarise()` has grouped output by
+## &#39;borough&#39;. You can override using the
 ## `.groups` argument.</code></pre>
 <pre class="r"><code>inspec_general_borough_sumary&lt;-
 borough_inspec_summmary%&gt;%
@@ -445,7 +453,8 @@ group_by(general_category,borough)%&gt;%
 summarise(
 n_obs=sum(n_obs)
 )</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;general_category&#39;. You can override using
+<pre><code>## `summarise()` has grouped output by
+## &#39;general_category&#39;. You can override using
 ## the `.groups` argument.</code></pre>
 <p>the plots below is detailed information to explore the relationship
 between borough and inspections (maybe for Shiny????)</p>

@@ -109,9 +109,10 @@ bar_max_cap1 = Childcare_center %>%
   labs(
     x = "Violation Category",
     y = "Frequency",
+    title = "Pre School",
     fill = "Group"
   ) +
-  theme(legend.position = "bottom") 
+  theme(legend.position = "bottom", axis.text.x = element_text(size=10, angle=45, hjust = 1)) 
 
 bar_max_cap2 = Childcare_center %>% 
   mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category),
@@ -126,11 +127,13 @@ bar_max_cap2 = Childcare_center %>%
   labs(
     x = "Violation Category",
     y = "Frequency",
+    title = "Infants/Toddlers",
     fill = "Group"
   ) +
-  theme(legend.position = "bottom") 
+  theme(legend.position = "bottom", axis.text.x = element_text(size=10, angle=45, hjust = 1)) 
 
 bar_max_cap1 + bar_max_cap2
+
 # arrange
 ```
 

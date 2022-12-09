@@ -37,13 +37,6 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
-<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
-<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
-<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
-<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
-<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
-<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -345,6 +338,36 @@ div.tocify {
         <li>
   <a href="about.html">About</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    EDA
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="inspec_summary.html">Inspection Summary</a>
+    </li>
+    <li>
+      <a href="borough_eda.html">Borough vs Violation</a>
+    </li>
+    <li>
+      <a href="age_range_and_program_type.html">Age Range and Program Type vs Violation</a>
+    </li>
+    <li>
+      <a href="EDA_Pei.html">Maxium Capcity and Total Education Workers vs Violation</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="statistical_analysis.html">Statistical Analysis</a>
+</li>
+<li>
+  <a href="map.html">Map</a>
+</li>
+<li>
+  <a href="final_report.html">Final Report</a>
+</li>
 <li>
   <a href="mailto:&lt;you@youremail.com&gt;">
     <span class="fa fa-envelope fa-lg"></span>
@@ -356,24 +379,6 @@ div.tocify {
     <span class="fa fa-github fa-lg"></span>
      
   </a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    EDA
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="age_range_and_program_type.html">Age Range and Program Type</a>
-    </li>
-    <li>
-      <a href="EDA_Pei.html">Maxium Capcity and Total Education Workers</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="statistical_analysis.html">Statistical Analysis</a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -398,109 +403,32 @@ div.tocify {
 </div>
 
 
+<div id="age-range" class="section level3">
+<h3>Age Range</h3>
 <pre class="r"><code>Childcare_center %&gt;% 
   group_by(age_range) %&gt;% 
   count(violation_category) %&gt;% 
   ggplot(aes(fill =violation_category, x=age_range,y = n))+
   geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)</code></pre>
-<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+### Program Type Age range is the same as the program type
+violation.(graph below)</p>
 <pre class="r"><code>Childcare_center %&gt;% 
   group_by(program_type) %&gt;% 
   count(violation_category) %&gt;% 
   ggplot(aes(fill =violation_category, x=program_type,y = n))+
   geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)</code></pre>
 <p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<pre class="r"><code>Childcare_center %&gt;% 
-  group_by(borough, age_range) %&gt;% 
-  count(violation_category) %&gt;% 
-  ggplot(aes(fill =violation_category, x=borough,y = n))+
-  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)</code></pre>
-<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<pre class="r"><code># try
-try = Childcare_center %&gt;% 
-  select(borough,program_type,violation_category)%&gt;%
-  filter(program_type!=&quot;CAMP&quot;)%&gt;%
-  group_by(borough, program_type,violation_category) %&gt;% 
-  summarise(
-    n_obs=n())%&gt;%
-  ggplot(aes(x = borough, y = n_obs, fill = violation_category))+
-  geom_bar(stat=&quot;identity&quot;, width = 0.5, position = &quot;dodge&quot;)+
-  facet_grid(. ~ program_type) +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90))</code></pre>
-<pre><code>## `summarise()` has grouped output by
-## &#39;borough&#39;, &#39;program_type&#39;. You can override
-## using the `.groups` argument.</code></pre>
-<pre class="r"><code>ggplotly(try) </code></pre>
-<div id="htmlwidget-8f43eb4a2eb21b2845ca" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-8f43eb4a2eb21b2845ca">{"x":{"data":[{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[0.8125,1.8125,2.8125,3.8125,4.8125],"y":[154,159,51,102,6],"text":["borough: BRONX<br />n_obs:  154<br />violation_category: CRITICAL","borough: BROOKLYN<br />n_obs:  159<br />violation_category: CRITICAL","borough: MANHATTAN<br />n_obs:   51<br />violation_category: CRITICAL","borough: QUEENS<br />n_obs:  102<br />violation_category: CRITICAL","borough: STATEN ISLAND<br />n_obs:    6<br />violation_category: CRITICAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CRITICAL","legendgroup":"CRITICAL","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[0.8125,1.8125,2.8125,3.8125,4.8125],"y":[727,474,250,976,43],"text":["borough: BRONX<br />n_obs:  727<br />violation_category: CRITICAL","borough: BROOKLYN<br />n_obs:  474<br />violation_category: CRITICAL","borough: MANHATTAN<br />n_obs:  250<br />violation_category: CRITICAL","borough: QUEENS<br />n_obs:  976<br />violation_category: CRITICAL","borough: STATEN ISLAND<br />n_obs:   43<br />violation_category: CRITICAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CRITICAL","legendgroup":"CRITICAL","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[0.9375,1.9375,2.9375,3.9375,4.9375],"y":[96,152,120,121,19],"text":["borough: BRONX<br />n_obs:   96<br />violation_category: GENERAL","borough: BROOKLYN<br />n_obs:  152<br />violation_category: GENERAL","borough: MANHATTAN<br />n_obs:  120<br />violation_category: GENERAL","borough: QUEENS<br />n_obs:  121<br />violation_category: GENERAL","borough: STATEN ISLAND<br />n_obs:   19<br />violation_category: GENERAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(124,174,0,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"GENERAL","legendgroup":"GENERAL","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[0.9375,1.9375,2.9375,3.9375,4.9375],"y":[825,548,473,1315,91],"text":["borough: BRONX<br />n_obs:  825<br />violation_category: GENERAL","borough: BROOKLYN<br />n_obs:  548<br />violation_category: GENERAL","borough: MANHATTAN<br />n_obs:  473<br />violation_category: GENERAL","borough: QUEENS<br />n_obs: 1315<br />violation_category: GENERAL","borough: STATEN ISLAND<br />n_obs:   91<br />violation_category: GENERAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(124,174,0,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"GENERAL","legendgroup":"GENERAL","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[1.0625,2.0625,3.0625,4.0625,5.0625],"y":[187,533,346,287,79],"text":["borough: BRONX<br />n_obs:  187<br />violation_category: NO VIOLATION","borough: BROOKLYN<br />n_obs:  533<br />violation_category: NO VIOLATION","borough: MANHATTAN<br />n_obs:  346<br />violation_category: NO VIOLATION","borough: QUEENS<br />n_obs:  287<br />violation_category: NO VIOLATION","borough: STATEN ISLAND<br />n_obs:   79<br />violation_category: NO VIOLATION"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"NO VIOLATION","legendgroup":"NO VIOLATION","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[1.0625,2.0625,3.0625,4.0625,5.0625],"y":[735,1835,967,1480,328],"text":["borough: BRONX<br />n_obs:  735<br />violation_category: NO VIOLATION","borough: BROOKLYN<br />n_obs: 1835<br />violation_category: NO VIOLATION","borough: MANHATTAN<br />n_obs:  967<br />violation_category: NO VIOLATION","borough: QUEENS<br />n_obs: 1480<br />violation_category: NO VIOLATION","borough: STATEN ISLAND<br />n_obs:  328<br />violation_category: NO VIOLATION"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"NO VIOLATION","legendgroup":"NO VIOLATION","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[1.1875,2.1875,3.1875,4.1875,5.1875],"y":[57,70,19,38,4],"text":["borough: BRONX<br />n_obs:   57<br />violation_category: PUBLIC HEALTH HAZARD","borough: BROOKLYN<br />n_obs:   70<br />violation_category: PUBLIC HEALTH HAZARD","borough: MANHATTAN<br />n_obs:   19<br />violation_category: PUBLIC HEALTH HAZARD","borough: QUEENS<br />n_obs:   38<br />violation_category: PUBLIC HEALTH HAZARD","borough: STATEN ISLAND<br />n_obs:    4<br />violation_category: PUBLIC HEALTH HAZARD"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(199,124,255,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"PUBLIC HEALTH HAZARD","legendgroup":"PUBLIC HEALTH HAZARD","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[1.1875,2.1875,3.1875,4.1875,5.1875],"y":[169,196,89,218,9],"text":["borough: BRONX<br />n_obs:  169<br />violation_category: PUBLIC HEALTH HAZARD","borough: BROOKLYN<br />n_obs:  196<br />violation_category: PUBLIC HEALTH HAZARD","borough: MANHATTAN<br />n_obs:   89<br />violation_category: PUBLIC HEALTH HAZARD","borough: QUEENS<br />n_obs:  218<br />violation_category: PUBLIC HEALTH HAZARD","borough: STATEN ISLAND<br />n_obs:    9<br />violation_category: PUBLIC HEALTH HAZARD"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(199,124,255,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"PUBLIC HEALTH HAZARD","legendgroup":"PUBLIC HEALTH HAZARD","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":37.9178082191781,"r":18.9954337899543,"b":104.474885844749,"l":48.9497716894977},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,0.489128071319852],"automargin":true,"type":"linear","autorange":false,"range":[0.4,5.6],"tickmode":"array","ticktext":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"","hoverformat":".2f"},"annotations":[{"text":"borough","x":0.5,"y":0,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"top","annotationType":"axis","yshift":-86.2100456621005},{"text":"n_obs","x":0,"y":0.5,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-90,"xanchor":"right","yanchor":"center","annotationType":"axis","xshift":-33.6073059360731},{"text":"INFANT TODDLER","x":0.244564035659926,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(26,26,26,1)","family":"","size":11.689497716895},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"bottom"},{"text":"PRESCHOOL","x":0.755435964340074,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(26,26,26,1)","family":"","size":11.689497716895},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"bottom"}],"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-91.75,1926.75],"tickmode":"array","ticktext":["0","500","1000","1500"],"tickvals":[0,500,1000,1500],"categoryorder":"array","categoryarray":["0","500","1000","1500"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"","hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":0.489128071319852,"y0":0,"y1":1},{"type":"rect","fillcolor":"rgba(217,217,217,1)","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":0.489128071319852,"y0":0,"y1":23.37899543379,"yanchor":1,"ysizemode":"pixel"},{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0.510871928680148,"x1":1,"y0":0,"y1":1},{"type":"rect","fillcolor":"rgba(217,217,217,1)","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0.510871928680148,"x1":1,"y0":0,"y1":23.37899543379,"yanchor":1,"ysizemode":"pixel"}],"xaxis2":{"type":"linear","autorange":false,"range":[0.4,5.6],"tickmode":"array","ticktext":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-90,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"domain":[0.510871928680148,1],"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"","hoverformat":".2f"},"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"violation_category","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1292322bdf818":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"1292322bdf818","visdat":{"1292322bdf818":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
-<p>The graph above is showing the relationship between borough and the
-number of violation category count. The borough can separate the five
-parts “Bronx”, “Brooklyn”, “Manhattan”, “Staten Island” and “Queens”.
-Violation category “Critical”, “General”, “No Violation” and “Public
-Helath Hazard”.</p>
-<pre class="r"><code>Childcare_center %&gt;% 
-  group_by(borough) %&gt;% 
-  count(violation_category) %&gt;% 
-  ggplot(aes(fill =violation_category, x=borough,y = n))+
-  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)</code></pre>
-<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<pre class="r"><code>clean = Childcare_center %&gt;% 
-  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %&gt;%
-  group_by(borough, program_type,total_educational_workers) %&gt;% 
-  count(violation_category)
-
-fit = lm(n~ borough+program_type+total_educational_workers, data = clean)
-anova(fit)</code></pre>
-<pre><code>## Analysis of Variance Table
-## 
-## Response: n
-##                            Df Sum Sq Mean Sq F value    Pr(&gt;F)    
-## borough                     4  20606    5151  12.780 4.157e-10 ***
-## program_type                1  19366   19366  48.044 8.207e-12 ***
-## total_educational_workers   1  59003   59003 146.375 &lt; 2.2e-16 ***
-## Residuals                 855 344646     403                      
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<pre class="r"><code>clean2 = Childcare_center %&gt;% 
-  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %&gt;%
-  group_by(program_type) %&gt;% 
-  count(violation_category)
-
-fit = lm(n~ program_type, data = clean2)
-anova(fit) %&gt;% 
-  knitr::kable(caption = &quot;Two way anova of violation frequency and month&quot;)</code></pre>
-<table>
-<caption>Two way anova of violation frequency and month</caption>
-<thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">Df</th>
-<th align="right">Sum Sq</th>
-<th align="right">Mean Sq</th>
-<th align="right">F value</th>
-<th align="right">Pr(&gt;F)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">program_type</td>
-<td align="right">1</td>
-<td align="right">10460738</td>
-<td align="right">10460738</td>
-<td align="right">5.194815</td>
-<td align="right">0.0628675</td>
-</tr>
-<tr class="even">
-<td align="left">Residuals</td>
-<td align="right">6</td>
-<td align="right">12082130</td>
-<td align="right">2013688</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-</tr>
-</tbody>
-</table>
+<p>After analysing the data we found that the age-range and program type
+relationship is the same. Infant school is for 0-2 years kids and
+preschool is for 0-5 years kids. The graph above showing the
+relationship between the program type (Preschool&amp;Infant Toddler) and
+the violation category cases(Critial, General, No Violation and Public
+Health Hazrd). As we can see from the graph, preschool has a higher
+violation cases in the categoy “public health hazard”, “general” and
+“critical” than the Infant todddler program type. And in three violation
+categories, the “general” cases is higher then the other two.</p>
+</div>
 
 
 

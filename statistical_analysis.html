@@ -337,6 +337,36 @@ div.tocify {
         <li>
   <a href="about.html">About</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    EDA
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="inspec_summary.html">Inspection Summary</a>
+    </li>
+    <li>
+      <a href="borough_eda.html">Borough vs Violation</a>
+    </li>
+    <li>
+      <a href="age_range_and_program_type.html">Age Range and Program Type vs Violation</a>
+    </li>
+    <li>
+      <a href="EDA_Pei.html">Maxium Capcity and Total Education Workers vs Violation</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="statistical_analysis.html">Statistical Analysis</a>
+</li>
+<li>
+  <a href="map.html">Map</a>
+</li>
+<li>
+  <a href="final_report.html">Final Report</a>
+</li>
 <li>
   <a href="mailto:&lt;you@youremail.com&gt;">
     <span class="fa fa-envelope fa-lg"></span>
@@ -348,24 +378,6 @@ div.tocify {
     <span class="fa fa-github fa-lg"></span>
      
   </a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    EDA
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="age_range_and_program_type.html">Age Range and Program Type</a>
-    </li>
-    <li>
-      <a href="EDA_Pei.html">Maxium Capcity and Total Education Workers</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="statistical_analysis.html">Statistical Analysis</a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -397,7 +409,7 @@ tbl</code></pre>
 ## {
 ##     UseMethod(&quot;tbl&quot;)
 ## }
-## &lt;bytecode: 0x7ff3b0013c80&gt;
+## &lt;bytecode: 0x7fd8c4537300&gt;
 ## &lt;environment: namespace:dplyr&gt;</code></pre>
 <pre class="r"><code>chisq.test(tbl1)%&gt;% 
   broom::tidy()%&gt;% 
@@ -664,23 +676,23 @@ confusionMatrix(data=confusion_data$predict_violation, reference = confusion_dat
 <tbody>
 <tr class="odd">
 <td align="left">accuracy</td>
-<td align="right">0.6202091</td>
+<td align="right">0.6236934</td>
 </tr>
 <tr class="even">
 <td align="left">kappa</td>
-<td align="right">0.2380403</td>
+<td align="right">0.2457588</td>
 </tr>
 <tr class="odd">
 <td align="left">sensitivity</td>
-<td align="right">0.6015857</td>
+<td align="right">0.6023278</td>
 </tr>
 <tr class="even">
 <td align="left">specificity</td>
-<td align="right">0.6366419</td>
+<td align="right">0.6433348</td>
 </tr>
 <tr class="odd">
 <td align="left">f1</td>
-<td align="right">0.5975880</td>
+<td align="right">0.6052632</td>
 </tr>
 </tbody>
 </table>
