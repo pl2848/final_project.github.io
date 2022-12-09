@@ -1,0 +1,137 @@
+---
+title: "Map"
+output: html_document
+---
+
+This markdown file is use for map and inspection EDA
+
+step1: input dataset DOHMH Childcare Center Inspections (Updated from november 25,2022) from NYC OpenData 
+```{r  setup, include=FALSE}
+library(tidyverse)
+library(ggridges)
+library(data.table)
+raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
+```
+Due to irregularities in writing, there is a lot of duplication in the child care records. The same child care centers can be different in many separate records because of typo. We were interested in calculating the number of violations for each child care center more accurately, so we standardized the lowercase names of child care centers, removed punctuation and spaces, and eliminated characters that could cause inconsistencies to merge the same legal names. 
+```{r}
+children_center<-
+  raw_data%>%
+  janitor::clean_names()%>%
+  mutate(
+    legal_name=tolower(legal_name),
+    legal_name=gsub('[[:punct:] ]+',' ',legal_name),
+    legal_name=gsub(" ","",legal_name),
+    legal_name=gsub("llc","",legal_name),
+    legal_name=gsub("inc","",legal_name),
+    legal_name=gsub("th","",legal_name),
+    legal_name=gsub("school","",legal_name),
+    legal_name=gsub("i","",legal_name),
+    legal_name=gsub("center","",legal_name),
+    legal_name=gsub("ctr","",legal_name)
+  )%>%
+  select(legal_name)%>%
+  group_by(legal_name)%>%
+  summarise(
+    n_obs=n()
+  )
+```
+
+
+We pinpointed the status of violation in different areas of New York's child care centers with zipcode, so the map can more visually present to the viewer the number of violations recorded in different areas of New York's child care centers.
+
+```{r}
+total_obs<-
+  raw_data%>%
+  janitor::clean_names()%>%
+  drop_na(zip_code)%>%
+  drop_na(violation_category)%>%
+  select(zip_code,violation_category)%>%
+  group_by(zip_code)%>%
+  summarise(
+    n_obs=n()
+  )
+total_obs
+```
+
+Map
+```{r, warning=FALSE, message=FALSE}
+#install.packages("rgdal")
+#install.packages("maps")
+#install.packages("BAMMtools")
+#install.packages("spdep")
+#install.packages("maptools")
+library(tidyverse)
+library(plotly)
+library(rgdal)
+library(plotly)
+library(maps)
+library(devtools)
+library(leaflet)
+library(BAMMtools)
+library(spdep)
+library(maptools)
+
+zipcode<- read_csv("./data/US Zip Codes from 2013 Government Data.csv")
+zipcode<-
+  zipcode%>%
+  mutate(
+    zip_code=ZIP,
+    zip_code=as.numeric(zip_code))
+
+zipcode_lat<-
+  left_join(total_obs,zipcode,by='zip_code')%>%
+  mutate(
+    zip_code=as.character(zip_code)
+    )
+
+# zip code tabulation area
+# https://data.cityofnewyork.us/Business/Zip-Code-Boundaries/i8iw-xf4u/data
+# import the shape file
+# https://plotly-book.cpsievert.me/maps.html
+
+
+zip_map <- readOGR(dsn = './data/ZIP_CODE_040114/ZIP_CODE_040114.shp', encoding = "UTF-8")
+
+zip_map@data <- left_join(zip_map@data,zipcode_lat, by = c('ZIPCODE' = 'zip_code'))
+
+# assign 0 for zip codes that have no match in the dog bite data
+zip_map$n_obs[is.na(zip_map$n_obs)] <- 0
+
+# CRS setting
+zip_map_crs <- spTransform(zip_map, CRS("+init=epsg:4326"))
+# export the json file
+# writeOGR(zip_map_crs, './data/zip_map_geojson', layer = 'zip_map', driver = 'GeoJSON')
+
+# Layout 
+# format of the label that pops up for each polygon
+label_popup <- paste0(
+  "<strong>Zip code: </strong>",
+  zip_map$ZIPCODE,
+  "<br><strong>Number of Violation: </strong>",
+  zip_map$n_obs
+)
+
+# get jenks natural break for violation
+getJenksBreaks(zip_map$n_obs, 6)
+# set bins
+bite_bins <- c(0, 25, 62, 97, 141, 260)
+pit_bins <- c(0 , 4, 14, 25, 41, 80)
+# set pals
+bite_pal <- colorBin('Greens', bins = bite_bins, na.color = '#aaff56')
+
+# choropleth map for violation
+leaflet::leaflet(data = zip_map_crs) %>% 
+  addProviderTiles('CartoDB.Positron') %>% 
+  addPolygons(fillColor = ~bite_pal(n_obs),
+              fillOpacity = 0.8,
+              color = "#BDBDC3",
+              weight = 1,
+              popup = label_popup,
+              highlightOptions = highlightOptions(color = "black", weight = 2,
+      bringToFront = TRUE)) %>% 
+  addLegend('bottomleft',
+            pal = bite_pal,
+            values = ~n_obs,
+            title = 'Number of violation incidents by zip code',
+            opacity = 1)
+```

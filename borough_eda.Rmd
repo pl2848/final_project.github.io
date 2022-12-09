@@ -128,3 +128,4 @@ theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
   
 ggplotly(violation_borough_sumary_all)
 ```
+
