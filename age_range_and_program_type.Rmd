@@ -35,6 +35,7 @@ Childcare_center %>%
   filter(age_range == "2 YEARS - 5 YEARS") 
 ```
 
+### Age Range
 ```{r}
 Childcare_center %>% 
   group_by(age_range) %>% 
@@ -42,7 +43,8 @@ Childcare_center %>%
   ggplot(aes(fill =violation_category, x=age_range,y = n))+
   geom_bar(position = "dodge", stat = "identity")
 ```
-
+### Program Type
+Age range is the same as the program type violation.(graph below)
 ```{r}
 Childcare_center %>% 
   group_by(program_type) %>% 
@@ -51,59 +53,5 @@ Childcare_center %>%
   geom_bar(position = "dodge", stat = "identity")
 ```
 
-```{r}
-Childcare_center %>% 
-  group_by(borough, age_range) %>% 
-  count(violation_category) %>% 
-  ggplot(aes(fill =violation_category, x=borough,y = n))+
-  geom_bar(position = "dodge", stat = "identity")
-```
-
-```{r}
-# try
-try = Childcare_center %>% 
-  select(borough,program_type,violation_category)%>%
-  filter(program_type!="CAMP")%>%
-  group_by(borough, program_type,violation_category) %>% 
-  summarise(
-    n_obs=n())%>%
-  ggplot(aes(x = borough, y = n_obs, fill = violation_category))+
-  geom_bar(stat="identity", width = 0.5, position = "dodge")+
-  facet_grid(. ~ program_type) +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90))
-
-ggplotly(try) 
-```
-The graph above is showing the relationship between borough and the number of violation category count. The borough can separate the five parts "Bronx", "Brooklyn", "Manhattan", "Staten Island" and "Queens". Violation category "Critical", "General", "No Violation" and "Public Helath Hazard".
-```{r}
-Childcare_center %>% 
-  group_by(borough) %>% 
-  count(violation_category) %>% 
-  ggplot(aes(fill =violation_category, x=borough,y = n))+
-  geom_bar(position = "dodge", stat = "identity")
-```
-
-
-
-```{r}
-clean = Childcare_center %>% 
-  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %>%
-  group_by(borough, program_type,total_educational_workers) %>% 
-  count(violation_category)
-
-fit = lm(n~ borough+program_type+total_educational_workers, data = clean)
-anova(fit)
-```
-
-```{r}
-clean2 = Childcare_center %>% 
-  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %>%
-  group_by(program_type) %>% 
-  count(violation_category)
-
-fit = lm(n~ program_type, data = clean2)
-anova(fit) %>% 
-  knitr::kable(caption = "Two way anova of violation frequency and month")
-```
+After analysing the data we found that the age-range and program type relationship is the same. Infant school is for 0-2 years kids and preschool is for 0-5 years kids. The graph above showing the relationship between the program type (Preschool&Infant Toddler) and the violation category cases(Critial, General, No Violation and Public Health Hazrd). As we can see from the graph, preschool has a higher violation cases in the categoy "public health hazard", "general" and "critical" than the Infant todddler program type. And in three violation categories, the "general" cases is higher then the other two. 
 

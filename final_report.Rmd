@@ -1,0 +1,24 @@
+---
+title: "final_report"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Introduction:
+Nowadays, children care center become a worldwide popular topic by the working parents increasing. Most people choose to put their child to the children care center during their working time. In a high demand of request, choosing a safe and healthy children care environment is important.  However, some children care center still has the severe food safety and cooking environment problems which NYC government determine them as violation according to their severe level. In our research, we try to investigate the cafeteria violation in children care center in NYC using the NYC Open data set. 
+
+Method:
+
+
+Results: 
+
+Discussion: For the cafeteria violation category, the data set separate three parts “general violation”, “critical violation” and “public health hazard” by NYC government. Inspectors check for food handling, food temperature, personal hygiene, facility and equipment maintenance and vermin control. General violation is some event like not properly sanitizing cooking utensils. And violation like serving raw food such as a salad without properly washing it first can be critical violation. A public health hazard can be some event like failing to keep food at the right temperature. If the violation can’t be corrected before the inspection ends, the Health Department may close the restaurant until it’s fixed.
+
+Limitation: There are several limitations we encountered in our research. The major challenge would be the target variables determination. There are several columns we thought we could use as our target numerical variables. But after we analysis, we found that “violation rate percent”, “public health hazard violation rate”, “average public health hazard violation”, “critical violation rate” and “average critical violation rate” are categorical number data which limits our data analysis part. 
+Additionally, for the map part, we want to map the violation cases in each children care center in NYC. It can represent the data more precise. But for our data set, it doesn’t have the latitude and longitude which make us hard to map as point units to determine the location. 
+
+Reference:
+

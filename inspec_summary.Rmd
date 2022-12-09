@@ -1,0 +1,140 @@
+---
+title: "Insepection Summary"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(data.table)
+library(tidyverse)
+library(patchwork)
+library(plotly)
+library(haven)
+library(corrplot)
+raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
+```
+
+
+### Data Processing
+filter the variables to include currently permitted Children Care Center
+Question: should we consider permitted (17356) or permitted+ active (3399)(school)
+
+step1:filter the inspection record for only currently permitted Children Care Center
+step2:remove the useless variables: legal_name, building, street, phone, permit_number, permid_expiration, day care id, url, date_permitted, actual.
+
+```{r}
+Childcare_center<-
+  raw_data%>%
+  janitor::clean_names() %>%
+  filter(status=="Permitted")%>%
+  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+         -day_care_id,-url,-date_permitted,-actual)%>%
+  drop_na(violation_rate_percent)%>%
+  drop_na(public_health_hazard_violation_rate)
+
+```
+
+We investigated the severity of the presence of violation records in different types of inspections. The data graphs show that no-violation is the most frequent among the different types of inspections, and general violation is the highest among the inspections of initial annual inspection and monitoring inspection non-routine, except for no-violation. On the contrary, in the compliance inspection of open violations, critical cases are indeed more than general. lead based paint or lead in water inspection, although the number is small, we can still see that most of them are no-violation. 
+```{r}
+inspec_violation_summary<-
+  Childcare_center%>%
+select(borough,inspection_summary_result,violation_category)%>%
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category))%>%
+drop_na(inspection_summary_result)%>%
+  mutate(
+general_category=case_when(
+inspection_summary_result %like% "^Compliance Inspection of Open Violations" ~"Compliance Inspection of Open Violations",
+inspection_summary_result %like% "^Initial Annual Inspection" ~"Initial Annual Inspection",
+inspection_summary_result %like% "^Lead Based Paint or Lead in Water Inspection" ~"Lead Based Paint or Lead in Water Inspection",
+inspection_summary_result %like% "^Monitoring Inspection Non-Routine" ~"Monitoring Inspection Non-Routine")
+)%>%
+  group_by(general_category,violation_category)%>%
+  summarise(
+    n_obs=n()
+  )%>%
+  ggplot(aes(fill =violation_category, x=general_category,y = n_obs))+
+  geom_bar(position = "dodge", stat = "identity")+
+theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y="number of violations",title="Inspection categories vs.violation categories",x="inspection categories")
+  
+ggplotly(inspec_violation_summary)
+
+
+```
+
+### Frequency of Violation Category for Each center
+We also listed the childcare center names with violation frequency as follows. We can see that "beans talk childcare academy" has the highest violation frequency of 189. "Noreast Bronx Daycare" and "Children of America Queens" also have violation frequency larger than 100. For parents who want to choose childcare center may want to avoid these centers with frequent violations.
+```{r}
+ children_center_name = children_center<-
+  raw_data%>%
+  janitor::clean_names()%>%
+  mutate(
+    center_name=tolower(center_name),
+    center_name=gsub('[[:punct:] ]+',' ',center_name),
+    center_name=gsub(" ","",center_name),
+    center_name=gsub("llc","",center_name),
+    center_name=gsub("inc","",center_name),
+    center_name=gsub("th","",center_name),
+    center_name=gsub("school","",center_name),
+    center_name=gsub("center","",center_name),
+    center_name=gsub("ctr","",center_name)
+  )%>%
+  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %>%
+   filter(violation_category != "NO VIOLATION") %>% 
+  mutate(violation_category = "VIOLATION") %>% 
+  group_by(center_name,borough) %>% 
+  count() %>% 
+  arrange(desc(n))
+children_center_name
+```
+
+### Top 10 regulation summaries of childcare center inspection
+To get an overview of the regulation summaries, we listed the top 10 regularion summary notes. We can see that in most of the inspection, there's no new violation, which is a good thing. The second common regulation summary is that floors and walls were not maintained. Other common inspection regulation notes include: the medical clearance of stuffs is not satisfied (vaccination), not enough stuff training hours, water supply problems...
+```{r, warning=FALSE, message=FALSE}
+Childcare_center %>% 
+  group_by(regulation_summary) %>% 
+  summarise(Frquency = n()) %>% 
+  arrange(desc(Frquency)) %>% 
+  top_n(10) %>% 
+  knitr::kable()
+```
+
+### Top 10 inspection summaries result of childcare center inspection
+```{r, warning=FALSE, message=FALSE}
+Childcare_center %>% 
+  drop_na() %>% 
+  group_by(inspection_summary_result) %>% 
+  summarise(Frquency = n()) %>% 
+  arrange(desc(Frquency)) %>% 
+  top_n(10) %>% 
+  knitr::kable()
+```
+
+
+### Correlation Matrix Heat Map
+
+We created the correlation heat map to see the relationship between each variables that we are interested in. We can see that borough seems to have positive association with violation, while total educational workers, maximum capacity and program type have nagetive association. We will focus on exploring the relationship between these variables in the follwing analysis.
+```{r}
+ Childcare_center %>% 
+  select(borough, total_educational_workers, program_type, maximum_capacity, violation_category) %>%
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  mutate(borough = as.numeric(as.factor(borough)),
+         program_type = as.numeric(as.factor(program_type)),
+         violation_category =as.numeric(as.factor(violation_category)) )%>% 
+  drop_na() %>% 
+  cor(method = "pearson" ) %>%
+  corrplot(
+    method = "color",
+    type = "lower",
+    tl.col = "Black",
+    tl.srt = 45,
+    diag = F,
+    order = "AOE"
+  )
+  
+```
+
+
+
+

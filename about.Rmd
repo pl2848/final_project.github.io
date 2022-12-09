@@ -42,3 +42,13 @@ In the statistical analyses tab, you will find:
 In Mapping tab, you will find:
 
 * Mapping of Childcare Center by Zipcood with Violation Frequency 
+
+## Collaborators
+
+Shuting Kang 
+
+Wenjun Mo 
+
+Keming Zhan 
+
+Pei Liu (pl2848)

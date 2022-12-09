@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Insepection Summary</title>
+
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    EDA
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="borough_eda.html">Borough vs Violation</a>
+    </li>
+    <li>
+      <a href="age_range_and_program_type.html">Age Range and Program Type vs Violation</a>
+    </li>
+    <li>
+      <a href="EDA_Pei.html">Maxium Capcity and Total Education Workers vs Violation</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="statistical_analysis.html">Statistical Analysis</a>
+</li>
+<li>
+  <a href="map.html">Map</a>
+</li>
+<li>
+  <a href="mailto:&lt;you@youremail.com&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/&lt;YOUR_GH_NAME&gt;/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Insepection Summary</h1>
+
+</div>
+
+
+<div id="data-processing" class="section level3">
+<h3>Data Processing</h3>
+<p>filter the variables to include currently permitted Children Care
+Center Question: should we consider permitted (17356) or permitted+
+active (3399)(school)</p>
+<p>step1:filter the inspection record for only currently permitted
+Children Care Center step2:remove the useless variables: legal_name,
+building, street, phone, permit_number, permid_expiration, day care id,
+url, date_permitted, actual.</p>
+<pre class="r"><code>Childcare_center&lt;-
+  raw_data%&gt;%
+  janitor::clean_names() %&gt;%
+  filter(status==&quot;Permitted&quot;)%&gt;%
+  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+         -day_care_id,-url,-date_permitted,-actual)%&gt;%
+  drop_na(violation_rate_percent)%&gt;%
+  drop_na(public_health_hazard_violation_rate)</code></pre>
+<p>We investigated the severity of the presence of violation records in
+different types of inspections. The data graphs show that no-violation
+is the most frequent among the different types of inspections, and
+general violation is the highest among the inspections of initial annual
+inspection and monitoring inspection non-routine, except for
+no-violation. On the contrary, in the compliance inspection of open
+violations, critical cases are indeed more than general. lead based
+paint or lead in water inspection, although the number is small, we can
+still see that most of them are no-violation.</p>
+<pre class="r"><code>inspec_violation_summary&lt;-
+  Childcare_center%&gt;%
+select(borough,inspection_summary_result,violation_category)%&gt;%
+  mutate(violation_category = ifelse( is.na(violation_category), &quot;NO VIOLATION&quot;, violation_category))%&gt;%
+drop_na(inspection_summary_result)%&gt;%
+  mutate(
+general_category=case_when(
+inspection_summary_result %like% &quot;^Compliance Inspection of Open Violations&quot; ~&quot;Compliance Inspection of Open Violations&quot;,
+inspection_summary_result %like% &quot;^Initial Annual Inspection&quot; ~&quot;Initial Annual Inspection&quot;,
+inspection_summary_result %like% &quot;^Lead Based Paint or Lead in Water Inspection&quot; ~&quot;Lead Based Paint or Lead in Water Inspection&quot;,
+inspection_summary_result %like% &quot;^Monitoring Inspection Non-Routine&quot; ~&quot;Monitoring Inspection Non-Routine&quot;)
+)%&gt;%
+  group_by(general_category,violation_category)%&gt;%
+  summarise(
+    n_obs=n()
+  )%&gt;%
+  ggplot(aes(fill =violation_category, x=general_category,y = n_obs))+
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)+
+theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y=&quot;number of violations&quot;,title=&quot;Inspection categories vs.violation categories&quot;,x=&quot;inspection categories&quot;)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;general_category&#39;. You can override using
+## the `.groups` argument.</code></pre>
+<pre class="r"><code>ggplotly(inspec_violation_summary)</code></pre>
+<div id="htmlwidget-884903681fe2dcee8cf6" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-884903681fe2dcee8cf6">{"x":{"data":[{"orientation":"v","width":[0.225,0.225,0.3,0.225000000000001],"base":[0,0,0,0],"x":[0.6625,1.6625,2.7,3.6625],"y":[158,2338,2,272],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:  158<br />violation_category: CRITICAL","general_category: Initial Annual Inspection<br />n_obs: 2338<br />violation_category: CRITICAL","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:    2<br />violation_category: CRITICAL","general_category: Monitoring Inspection Non-Routine<br />n_obs:  272<br />violation_category: CRITICAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CRITICAL","legendgroup":"CRITICAL","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.225,0.225,0.3,0.225],"base":[0,0,0,0],"x":[0.8875,1.8875,3,3.8875],"y":[141,3225,7,317],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:  141<br />violation_category: GENERAL","general_category: Initial Annual Inspection<br />n_obs: 3225<br />violation_category: GENERAL","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:    7<br />violation_category: GENERAL","general_category: Monitoring Inspection Non-Routine<br />n_obs:  317<br />violation_category: GENERAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(124,174,0,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"GENERAL","legendgroup":"GENERAL","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.225,0.225,0.3,0.225],"base":[0,0,0,0],"x":[1.1125,2.1125,3.3,4.1125],"y":[1240,4647,23,882],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs: 1240<br />violation_category: NO VIOLATION","general_category: Initial Annual Inspection<br />n_obs: 4647<br />violation_category: NO VIOLATION","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:   23<br />violation_category: NO VIOLATION","general_category: Monitoring Inspection Non-Routine<br />n_obs:  882<br />violation_category: NO VIOLATION"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"NO VIOLATION","legendgroup":"NO VIOLATION","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.225,0.225,0.225],"base":[0,0,0],"x":[1.3375,2.3375,4.3375],"y":[63,578,162],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:   63<br />violation_category: PUBLIC HEALTH HAZARD","general_category: Initial Annual Inspection<br />n_obs:  578<br />violation_category: PUBLIC HEALTH HAZARD","general_category: Monitoring Inspection Non-Routine<br />n_obs:  162<br />violation_category: PUBLIC HEALTH HAZARD"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(199,124,255,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"PUBLIC HEALTH HAZARD","legendgroup":"PUBLIC HEALTH HAZARD","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.7625570776256,"r":7.30593607305936,"b":182.170417329056,"l":48.9497716894977},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Inspection categories vs.violation categories","font":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Compliance Inspection of Open Violations","Initial Annual Inspection","Lead Based Paint or Lead in Water Inspection","Monitoring Inspection Non-Routine"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Compliance Inspection of Open Violations","Initial Annual Inspection","Lead Based Paint or Lead in Water Inspection","Monitoring Inspection Non-Routine"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"inspection categories","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-232.35,4879.35],"tickmode":"array","ticktext":["0","1000","2000","3000","4000"],"tickvals":[2.8421709430404e-14,1000,2000,3000,4000],"categoryorder":"array","categoryarray":["0","1000","2000","3000","4000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"number of violations","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"violation_category","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1381d1ff8e6d3":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"1381d1ff8e6d3","visdat":{"1381d1ff8e6d3":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="frequency-of-violation-category-for-each-center"
+class="section level3">
+<h3>Frequency of Violation Category for Each center</h3>
+<p>We also listed the childcare center names with violation frequency as
+follows. We can see that “beans talk childcare academy” has the highest
+violation frequency of 189. “Noreast Bronx Daycare” and “Children of
+America Queens” also have violation frequency larger than 100. For
+parents who want to choose childcare center may want to avoid these
+centers with frequent violations.</p>
+<pre class="r"><code> children_center_name = children_center&lt;-
+  raw_data%&gt;%
+  janitor::clean_names()%&gt;%
+  mutate(
+    center_name=tolower(center_name),
+    center_name=gsub(&#39;[[:punct:] ]+&#39;,&#39; &#39;,center_name),
+    center_name=gsub(&quot; &quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;llc&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;inc&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;th&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;school&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;center&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;ctr&quot;,&quot;&quot;,center_name)
+  )%&gt;%
+  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %&gt;%
+   filter(violation_category != &quot;NO VIOLATION&quot;) %&gt;% 
+  mutate(violation_category = &quot;VIOLATION&quot;) %&gt;% 
+  group_by(center_name,borough) %&gt;% 
+  count() %&gt;% 
+  arrange(desc(n))
+children_center_name</code></pre>
+<pre><code>## # A tibble: 1,706 × 3
+## # Groups:   center_name, borough [1,706]
+##    center_name                    borough       n
+##    &lt;chr&gt;                          &lt;fct&gt;     &lt;int&gt;
+##  1 beanstalkchildcareacademy      BRONX       189
+##  2 noreastbronxdaycare            BRONX       116
+##  3 childrenofamericaqueens        QUEENS      102
+##  4 brighorizonschildrenss         MANHATTAN    94
+##  5 montessoriprogressivelearning  QUEENS       90
+##  6 qsac                           QUEENS       78
+##  7 allmystarsdaycare              QUEENS       73
+##  8 habitot                        BRONX        73
+##  9 littlescholarsearlydevelopment BRONX        68
+## 10 booksrattles                   QUEENS       63
+## # … with 1,696 more rows</code></pre>
+</div>
+<div id="top-10-regulation-summaries-of-childcare-center-inspection"
+class="section level3">
+<h3>Top 10 regulation summaries of childcare center inspection</h3>
+<p>To get an overview of the regulation summaries, we listed the top 10
+regularion summary notes. We can see that in most of the inspection,
+there’s no new violation, which is a good thing. The second common
+regulation summary is that floors and walls were not maintained. Other
+common inspection regulation notes include: the medical clearance of
+stuffs is not satisfied (vaccination), not enough stuff training hours,
+water supply problems…</p>
+<pre class="r"><code>Childcare_center %&gt;% 
+  group_by(regulation_summary) %&gt;% 
+  summarise(Frquency = n()) %&gt;% 
+  arrange(desc(Frquency)) %&gt;% 
+  top_n(10) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<colgroup>
+<col width="96%" />
+<col width="3%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">regulation_summary</th>
+<th align="right">Frquency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">There were no new violations observed at the time of
+this inspection/visit.</td>
+<td align="right">7545</td>
+</tr>
+<tr class="even">
+<td align="left">At time of inspection floors/walls ceilings were
+observed Not maintained; in disrepair or covered in a toxic finish.</td>
+<td align="right">972</td>
+</tr>
+<tr class="odd">
+<td align="left">Staff and volunteers obtain documentation showing
+immunization with 2 doses measles/mumps, 1 dose rubella, 2 doses
+varicella and 1 dose Tdap. Medical exemptions only. History of measles,
+mumps or rubella shall Not replace MMR vaccine except in presence of MMR
+varicella antibodies.</td>
+<td align="right">615</td>
+</tr>
+<tr class="even">
+<td align="left">At time of inspection it was determined that child care
+service allows staff to perform their duties that are Not healthy or are
+incapable of carrying out their duties. Staff medical clearances are Not
+maintained by child care service.</td>
+<td align="right">502</td>
+</tr>
+<tr class="odd">
+<td align="left">Enrolled children 6 months to 59 months have Not
+received FDA approved annual influenza immunization by December 31 of
+the year</td>
+<td align="right">430</td>
+</tr>
+<tr class="even">
+<td align="left">At time of inspection it was determined that child care
+service failed to ensure staff received required training within time
+frames and/or failed to maintain training records.</td>
+<td align="right">428</td>
+</tr>
+<tr class="odd">
+<td align="left">At time of inspection child care service facility
+observed Not maintained or in disrepair. Dry sweeping observed in areas
+occupied by children.</td>
+<td align="right">286</td>
+</tr>
+<tr class="even">
+<td align="left">Exits and other egress Not provided with required
+signage at time of inspection.</td>
+<td align="right">228</td>
+</tr>
+<tr class="odd">
+<td align="left">Staff failed to obtain proof of immunization; Except
+for exempt staff, required staff immunizations were not submitted to
+child care service; records not confidential.</td>
+<td align="right">192</td>
+</tr>
+<tr class="even">
+<td align="left">Fingerprint screening Not arranged for current and
+prospective personnel; Results Not satisfactory or CAP was Not
+approved</td>
+<td align="right">189</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div
+id="top-10-inspection-summaries-result-of-childcare-center-inspection"
+class="section level3">
+<h3>Top 10 inspection summaries result of childcare center
+inspection</h3>
+<pre class="r"><code>Childcare_center %&gt;% 
+  drop_na() %&gt;% 
+  group_by(inspection_summary_result) %&gt;% 
+  summarise(Frquency = n()) %&gt;% 
+  arrange(desc(Frquency)) %&gt;% 
+  top_n(10) %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<colgroup>
+<col width="90%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">inspection_summary_result</th>
+<th align="right">Frquency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Initial Annual Inspection - Reinspection Required;
+Fines pending</td>
+<td align="right">3163</td>
+</tr>
+<tr class="even">
+<td align="left">Initial Annual Inspection - Reinspection Not
+Required</td>
+<td align="right">1169</td>
+</tr>
+<tr class="odd">
+<td align="left">Initial Annual Inspection - Reinspection Required</td>
+<td align="right">853</td>
+</tr>
+<tr class="even">
+<td align="left">Monitoring Inspection Non-Routine - Reinspection
+Required; Fines pending</td>
+<td align="right">430</td>
+</tr>
+<tr class="odd">
+<td align="left">Compliance Inspection of Open Violations - Reinspection
+Required; Fines pending</td>
+<td align="right">175</td>
+</tr>
+<tr class="even">
+<td align="left">Initial Annual Inspection - Reinspection Required;
+Program closed</td>
+<td align="right">155</td>
+</tr>
+<tr class="odd">
+<td align="left">Initial Annual Inspection - Passed inspection;
+Violations corrected at time of inspection</td>
+<td align="right">148</td>
+</tr>
+<tr class="even">
+<td align="left">Monitoring Inspection Non-Routine - Reinspection Not
+Required</td>
+<td align="right">130</td>
+</tr>
+<tr class="odd">
+<td align="left">Compliance Inspection of Open Violations - Reinspection
+Required</td>
+<td align="right">106</td>
+</tr>
+<tr class="even">
+<td align="left">Monitoring Inspection Non-Routine - Reinspection
+Required</td>
+<td align="right">71</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="correlation-matrix-heat-map" class="section level3">
+<h3>Correlation Matrix Heat Map</h3>
+<p>We created the correlation heat map to see the relationship between
+each variables that we are interested in. We can see that borough seems
+to have positive association with violation, while total educational
+workers, maximum capacity and program type have nagetive association. We
+will focus on exploring the relationship between these variables in the
+follwing analysis.</p>
+<pre class="r"><code> Childcare_center %&gt;% 
+  select(borough, total_educational_workers, program_type, maximum_capacity, violation_category) %&gt;%
+  mutate(violation_category = ifelse( is.na(violation_category), &quot;NO VIOLATION&quot;, violation_category)) %&gt;%
+  mutate(borough = as.numeric(as.factor(borough)),
+         program_type = as.numeric(as.factor(program_type)),
+         violation_category =as.numeric(as.factor(violation_category)) )%&gt;% 
+  drop_na() %&gt;% 
+  cor(method = &quot;pearson&quot; ) %&gt;%
+  corrplot(
+    method = &quot;color&quot;,
+    type = &quot;lower&quot;,
+    tl.col = &quot;Black&quot;,
+    tl.srt = 45,
+    diag = F,
+    order = &quot;AOE&quot;
+  )</code></pre>
+<p><img src="inspec_summary_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

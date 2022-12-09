@@ -51,60 +51,10 @@ Childcare_center<-
   filter(age_range != "0 YEARS - 16 YEARS")
 #Childcare_center
 ```
-### Correlation Matrix Heat Map
-
-We created the correlation heat map to see the relationship between each variables that we are interested in.
-```{r}
- Childcare_center %>% 
-  select(borough, total_educational_workers, program_type, maximum_capacity, violation_category) %>%
-  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
-  mutate(borough = as.numeric(as.factor(borough)),
-         program_type = as.numeric(as.factor(program_type)),
-         violation_category =as.numeric(as.factor(violation_category)) )%>% 
-  drop_na() %>% 
-  cor(method = "pearson" ) %>%
-  corrplot(
-    method = "color",
-    type = "lower",
-    tl.col = "Black",
-    tl.srt = 45,
-    diag = F,
-    order = "AOE"
-  )
-  
-```
-
-
-# Frequency of Violation Category for Each center
-```{r}
- 
-children_center_name<-
-  raw_data%>%
-  janitor::clean_names()%>%
-  mutate(
-    legal_name=tolower(legal_name),
-    legal_name=gsub('[[:punct:] ]+',' ',legal_name),
-    legal_name=gsub(" ","",legal_name),
-    legal_name=gsub("llc","",legal_name),
-    legal_name=gsub("inc","",legal_name),
-    legal_name=gsub("th","",legal_name),
-    legal_name=gsub("school","",legal_name),
-    legal_name=gsub("center","",legal_name),
-    legal_name=gsub("ctr","",legal_name)
-  )%>%
-  select(legal_name, violation_category)%>%
-  group_by(legal_name)%>%
-  summarise(
-    Frequency=n()
-  )%>% 
-  arrange(desc(Frequency)) %>% 
-  knitr::kable()
-children_center_name
-```
 
 
 
-# The relationship between maximum capacity and child care type
+### The relationship between maximum capacity and child care type
 We can see from the following boxplot that the distributions maximum capacity in preschool and Infants / Toddlers are significantly different. Overall, Preschool has higher maximum capacity than Infants/Toddlers, and the range of capicity is also wider than it is in the Infants/Toddlers.The max maximum capacity in childcare center is 371, while the max maximum capacity in Infants/Toddlers is 135.
 ```{r}
 plotly_capacity_type = Childcare_center %>% 
@@ -113,7 +63,7 @@ plotly_capacity_type = Childcare_center %>%
 plotly_capacity_type
 ```
 
-# The relationship between maximum capacity and violation category
+### The relationship between maximum capacity and violation category
 We then want to examine whether there is connection between maximum capacity and violation. Since the maximum capacity in different child care types are different, we display the distribution of maximum capacity vs violation category by child care type. 
 
 We can conclude from the plot that there is no significant difference between the distribution of maximum capacity for each violation category. Besides, there are many outliers in each groups, which will affect our analysis results. 
@@ -184,7 +134,7 @@ bar_max_cap1 + bar_max_cap2
 # arrange
 ```
 
-# The relationship between total educational workers and violation category
+### The relationship between total educational workers and violation category
 As we can see, there's no significant difference between the distribution of total education workers in each violation categories.
 ```{r}
 
@@ -203,7 +153,7 @@ boxplot_worker = Childcare_center %>%
 boxplot_worker
 
 ```
-# The relationship between total educational worker, maximum capacity and child care type
+### The relationship between total educational worker, maximum capacity and child care type
 As we can see, there's no significant different within each child care type. But the educational workers per child is higher in Infants/Toddlers than it is in Pre school.
 ```{r, warning=FALSE}
 plotly_capacity_type = Childcare_center %>% 
@@ -213,88 +163,5 @@ plotly_capacity_type = Childcare_center %>%
   layout(boxmode = "group")
 plotly_capacity_type
 ```
-
-# Top 10 regulation summaries of childcare center inspection
-```{r, warning=FALSE, message=FALSE}
-Childcare_center %>% 
-  group_by(regulation_summary) %>% 
-  summarise(Frquency = n()) %>% 
-  arrange(desc(Frquency)) %>% 
-  top_n(10) %>% 
-  knitr::kable()
-```
-
-# Top 10 inspection summaries result of childcare center inspection
-```{r, warning=FALSE, message=FALSE}
-Childcare_center %>% 
-  drop_na() %>% 
-  group_by(inspection_summary_result) %>% 
-  summarise(Frquency = n()) %>% 
-  arrange(desc(Frquency)) %>% 
-  top_n(10) %>% 
-  knitr::kable()
-```
-
-
-# added plot
-```{r, warning=FALSE, message=FALSE}
-# New dataset for modelling
-childcare_model <- Childcare_center %>% 
-  mutate(violation_category = ifelse(violation_category == "NO VIOLATION", 0, 1),
-         borough = as.factor(borough)) %>% # 0 is no liolation, 1 is with violation
-  select(borough,child_care_type,total_educational_workers,maximum_capacity, violation_category)
-
-# fit logistic reg
-logistic_model = childcare_model %>% 
-  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
-
-summary(logistic_model)
-```
-
-
-
-```{r}
-library(rsample)   # for data splitting
-
-# Modeling packages
-library(caret)     # for logistic regression modeling
-
-# Model interpretability packages
-library(vip)       # variable importance
-
-
-childcare_split <- initial_split(childcare_model, prop = .7)
-childcare_train <- training(childcare_split)
-childcare_test  <- testing(childcare_split)
-
-set.seed(123)
-
-# predict violation using model
-# fit logistic reg
-logistic_model_train = childcare_train %>% 
-  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
-
-logistics_predict = predict(logistic_model_train, childcare_test, type = 'response')
-# convert predicted value to TRUE/FALSE
-childcare_test$predict_violation = ifelse(logistics_predict >= .5, 1, 0)
-
-# determine accuracy of the model
-accuracy = mean(childcare_test$predict_violation == childcare_test$violation_category)
-accuracy
-```
-
-```{r}
-tbl1=table(Childcare_center$program_type,Childcare_center$violation_category)
-tbl
-chisq.test(tbl1)
-summary(chisq.test(tbl1))
-```
-
-```{r}
-tbl2=table(Childcare_center$child_care_type,Childcare_center$violation_category)
-tbl2
-chisq.test(tbl2)
-```
-
 
 
