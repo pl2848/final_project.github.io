@@ -5,18 +5,22 @@ navbar:
   right:
     - text: "About"
       href: about.html
+    - text: "EDA"
+      menu:
+      - text: "Borough vs Violation"
+        href: borough_eda.html
+      - text: "Age Range and Program Type vs Violation"
+        href: age_range_and_program_type.html
+      - text: "Maxium Capcity and Total Education Workers vs Violation"
+        href: EDA_Pei.html
+    - text: "Statistical Analysis"
+      href: statistical_analysis.html
+    - text: "Map"
+      href: map_inspec_EDA.html
     - icon: fa-envelope fa-lg
       href: mailto:<you@youremail.com>
     - icon: fa-github fa-lg
       href: http://github.com/<YOUR_GH_NAME>/
-    - text: "EDA"
-      menu:
-      - text: "Age Range and Program Type"
-        href: age_range_and_program_type.html
-      - text: "Maxium Capcity and Total Education Workers"
-        href: EDA_Pei.html
-    - text: "Statistical Analysis"
-      href: statistical_analysis.html
 output:
   html_document:
     theme: cosmo

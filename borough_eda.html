@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Borough - Violation</title>
+
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    EDA
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="age_range_and_program_type.html">Age Range and Program Type</a>
+    </li>
+    <li>
+      <a href="EDA_Pei.html">Maxium Capcity and Total Education Workers</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="statistical_analysis.html">Statistical Analysis</a>
+</li>
+<li>
+  <a href="mailto:&lt;you@youremail.com&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/&lt;YOUR_GH_NAME&gt;/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Borough - Violation</h1>
+
+</div>
+
+
+<p>filter the variables to include currently permitted Children Care
+Center Question: should we consider permitted (17356) or permitted+
+active (3399)(school)</p>
+<p>step1:filter the inspection record for only currently permitted
+Children Care Center step2:remove the useless variables: legal_name,
+building, street, phone, permit_number, permid_expiration, day care id,
+url, date_permitted, actual.</p>
+<pre class="r"><code>Childcare_center&lt;-
+  raw_data%&gt;%
+  janitor::clean_names() %&gt;%
+  filter(status==&quot;Permitted&quot;)%&gt;%
+  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+         -day_care_id,-url,-date_permitted,-actual)%&gt;%
+  drop_na(violation_rate_percent)%&gt;%
+  drop_na(public_health_hazard_violation_rate)</code></pre>
+<p>We investigated the severity of the presence of violation records in
+different types of inspections. The data graphs show that no-violation
+is the most frequent among the different types of inspections, and
+general violation is the highest among the inspections of initial annual
+inspection and monitoring inspection non-routine, except for
+no-violation. On the contrary, in the compliance inspection of open
+violations, critical cases are indeed more than general. lead based
+paint or lead in water inspection, although the number is small, we can
+still see that most of them are no-violation.</p>
+<pre class="r"><code>inspec_violation_summary&lt;-
+  Childcare_center%&gt;%
+select(borough,inspection_summary_result,violation_category)%&gt;%
+  mutate(violation_category = ifelse( is.na(violation_category), &quot;NO VIOLATION&quot;, violation_category))%&gt;%
+drop_na(inspection_summary_result)%&gt;%
+  mutate(
+general_category=case_when(
+inspection_summary_result %like% &quot;^Compliance Inspection of Open Violations&quot; ~&quot;Compliance Inspection of Open Violations&quot;,
+inspection_summary_result %like% &quot;^Initial Annual Inspection&quot; ~&quot;Initial Annual Inspection&quot;,
+inspection_summary_result %like% &quot;^Lead Based Paint or Lead in Water Inspection&quot; ~&quot;Lead Based Paint or Lead in Water Inspection&quot;,
+inspection_summary_result %like% &quot;^Monitoring Inspection Non-Routine&quot; ~&quot;Monitoring Inspection Non-Routine&quot;)
+)%&gt;%
+  group_by(general_category,violation_category)%&gt;%
+  summarise(
+    n_obs=n()
+  )%&gt;%
+  ggplot(aes(fill =violation_category, x=general_category,y = n_obs))+
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)+
+theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y=&quot;number of violations&quot;,title=&quot;Inspection categories vs.violation categories&quot;,x=&quot;inspection categories&quot;)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;general_category&#39;. You can override using
+## the `.groups` argument.</code></pre>
+<pre class="r"><code>ggplotly(inspec_violation_summary)</code></pre>
+<div id="htmlwidget-02363cca938a5a4de599" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-02363cca938a5a4de599">{"x":{"data":[{"orientation":"v","width":[0.225,0.225,0.3,0.225000000000001],"base":[0,0,0,0],"x":[0.6625,1.6625,2.7,3.6625],"y":[158,2338,2,272],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:  158<br />violation_category: CRITICAL","general_category: Initial Annual Inspection<br />n_obs: 2338<br />violation_category: CRITICAL","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:    2<br />violation_category: CRITICAL","general_category: Monitoring Inspection Non-Routine<br />n_obs:  272<br />violation_category: CRITICAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CRITICAL","legendgroup":"CRITICAL","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.225,0.225,0.3,0.225],"base":[0,0,0,0],"x":[0.8875,1.8875,3,3.8875],"y":[141,3225,7,317],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:  141<br />violation_category: GENERAL","general_category: Initial Annual Inspection<br />n_obs: 3225<br />violation_category: GENERAL","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:    7<br />violation_category: GENERAL","general_category: Monitoring Inspection Non-Routine<br />n_obs:  317<br />violation_category: GENERAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(124,174,0,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"GENERAL","legendgroup":"GENERAL","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.225,0.225,0.3,0.225],"base":[0,0,0,0],"x":[1.1125,2.1125,3.3,4.1125],"y":[1240,4647,23,882],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs: 1240<br />violation_category: NO VIOLATION","general_category: Initial Annual Inspection<br />n_obs: 4647<br />violation_category: NO VIOLATION","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:   23<br />violation_category: NO VIOLATION","general_category: Monitoring Inspection Non-Routine<br />n_obs:  882<br />violation_category: NO VIOLATION"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"NO VIOLATION","legendgroup":"NO VIOLATION","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.225,0.225,0.225],"base":[0,0,0],"x":[1.3375,2.3375,4.3375],"y":[63,578,162],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:   63<br />violation_category: PUBLIC HEALTH HAZARD","general_category: Initial Annual Inspection<br />n_obs:  578<br />violation_category: PUBLIC HEALTH HAZARD","general_category: Monitoring Inspection Non-Routine<br />n_obs:  162<br />violation_category: PUBLIC HEALTH HAZARD"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(199,124,255,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"PUBLIC HEALTH HAZARD","legendgroup":"PUBLIC HEALTH HAZARD","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.7625570776256,"r":7.30593607305936,"b":182.170417329056,"l":48.9497716894977},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Inspection categories vs.violation categories","font":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Compliance Inspection of Open Violations","Initial Annual Inspection","Lead Based Paint or Lead in Water Inspection","Monitoring Inspection Non-Routine"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Compliance Inspection of Open Violations","Initial Annual Inspection","Lead Based Paint or Lead in Water Inspection","Monitoring Inspection Non-Routine"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"inspection categories","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-232.35,4879.35],"tickmode":"array","ticktext":["0","1000","2000","3000","4000"],"tickvals":[2.8421709430404e-14,1000,2000,3000,4000],"categoryorder":"array","categoryarray":["0","1000","2000","3000","4000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"number of violations","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"violation_category","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"12d3a21009f2c":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"12d3a21009f2c","visdat":{"12d3a21009f2c":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>borough vs. inspection summary result</p>
+<p>We examined the inspection categories of child care centers in
+different areas of New York that had records of violations，We found
+that the categories of inspection are divided into four major
+categories, which are Compliance Inspection of Open Violations, Initial
+Annual Inspection, Lead Based Paint or Lead in Water Inspection,
+Monitoring Inspection Non-Routine.</p>
+<pre class="r"><code>borough_inspec_summmary&lt;-
+  Childcare_center%&gt;%
+  select(borough,inspection_summary_result)%&gt;%
+  drop_na(inspection_summary_result)%&gt;%
+  group_by(borough,inspection_summary_result)%&gt;%
+  summarise(
+    n_obs=n()
+  )%&gt;%
+  mutate(
+    general_category=case_when(
+      inspection_summary_result %like% &quot;^Compliance Inspection of Open Violations&quot; ~&quot;Compliance Inspection of Open Violations&quot;,
+      inspection_summary_result %like% &quot;^Initial Annual Inspection&quot; ~&quot;Initial Annual Inspection&quot;,
+      inspection_summary_result %like% &quot;^Lead Based Paint or Lead in Water Inspection&quot; ~&quot;Lead Based Paint or Lead in Water Inspection&quot;,
+      inspection_summary_result %like% &quot;^Monitoring Inspection Non-Routine&quot; ~&quot;Monitoring Inspection Non-Routine&quot;)
+  )</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;borough&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<p>To better examine the number of violations in different types of
+inspections at child care centers in different borough of New York, we
+categorized and summarise the records of violation inspections by
+borough and type of inspection.</p>
+<p>borough group by general_category</p>
+<pre class="r"><code>borough_inspec_general_sumary&lt;-
+  borough_inspec_summmary%&gt;%
+  group_by(borough,general_category)%&gt;%
+  summarise(
+    n_obs=sum(n_obs)
+  )</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;borough&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code>borough_inspec_general_sumary</code></pre>
+<pre><code>## # A tibble: 19 × 3
+## # Groups:   borough [5]
+##    borough       general_category                             n_obs
+##    &lt;chr&gt;         &lt;chr&gt;                                        &lt;int&gt;
+##  1 BRONX         Compliance Inspection of Open Violations       552
+##  2 BRONX         Initial Annual Inspection                     1670
+##  3 BRONX         Lead Based Paint or Lead in Water Inspection    10
+##  4 BRONX         Monitoring Inspection Non-Routine              331
+##  5 BROOKLYN      Compliance Inspection of Open Violations       497
+##  6 BROOKLYN      Initial Annual Inspection                     3148
+##  7 BROOKLYN      Lead Based Paint or Lead in Water Inspection    11
+##  8 BROOKLYN      Monitoring Inspection Non-Routine              320
+##  9 MANHATTAN     Compliance Inspection of Open Violations        74
+## 10 MANHATTAN     Initial Annual Inspection                     1899
+## 11 MANHATTAN     Lead Based Paint or Lead in Water Inspection     6
+## 12 MANHATTAN     Monitoring Inspection Non-Routine              546
+## 13 QUEENS        Compliance Inspection of Open Violations       442
+## 14 QUEENS        Initial Annual Inspection                     3600
+## 15 QUEENS        Lead Based Paint or Lead in Water Inspection     5
+## 16 QUEENS        Monitoring Inspection Non-Routine              271
+## 17 STATEN ISLAND Compliance Inspection of Open Violations        37
+## 18 STATEN ISLAND Initial Annual Inspection                      471
+## 19 STATEN ISLAND Monitoring Inspection Non-Routine              165</code></pre>
+<p>We also created the following chart by type of inspection and the
+number of violations recorded. We found that New York’s child care
+centers had the highest number of violations in the intial annual
+inspection, far exceeding the other three types of violations combined,
+with the Queen’s district having the highest number of violations at
+3,600 records. In contrast, Lead Based Paint or Lead in Water Inspection
+had the least number of violations, with bronx having ten records,
+Brooklyn having eleven records, Manhattan having six records, queens
+having five records, and staten island not even having this type of
+record.</p>
+<pre class="r"><code>borough_inspec_general_sumary_plot_all&lt;-
+  borough_inspec_general_sumary%&gt;%
+  ggplot(aes(x=general_category,y=n_obs),)+
+  geom_bar(aes(fill = borough), stat = &quot;identity&quot;)+
+  theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y=&quot;number of violations&quot;,title=&quot;Inspection categories vs. borough&quot;,x=&quot;inspection categories&quot;)
+  
+ggplotly(borough_inspec_general_sumary_plot_all)</code></pre>
+<div id="htmlwidget-457ba7c2c28e3c18ad17" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-457ba7c2c28e3c18ad17">{"x":{"data":[{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[1050,9118,22,1302],"x":[1,2,3,4],"y":[552,1670,10,331],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:  552<br />borough: BRONX","general_category: Initial Annual Inspection<br />n_obs: 1670<br />borough: BRONX","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:   10<br />borough: BRONX","general_category: Monitoring Inspection Non-Routine<br />n_obs:  331<br />borough: BRONX"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"BRONX","legendgroup":"BRONX","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[553,5970,11,982],"x":[1,2,3,4],"y":[497,3148,11,320],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:  497<br />borough: BROOKLYN","general_category: Initial Annual Inspection<br />n_obs: 3148<br />borough: BROOKLYN","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:   11<br />borough: BROOKLYN","general_category: Monitoring Inspection Non-Routine<br />n_obs:  320<br />borough: BROOKLYN"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(163,165,0,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"BROOKLYN","legendgroup":"BROOKLYN","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[479,4071,5,436],"x":[1,2,3,4],"y":[74,1899,6,546],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:   74<br />borough: MANHATTAN","general_category: Initial Annual Inspection<br />n_obs: 1899<br />borough: MANHATTAN","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:    6<br />borough: MANHATTAN","general_category: Monitoring Inspection Non-Routine<br />n_obs:  546<br />borough: MANHATTAN"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,125,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"MANHATTAN","legendgroup":"MANHATTAN","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[37,471,0,165],"x":[1,2,3,4],"y":[442,3600,5,271],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:  442<br />borough: QUEENS","general_category: Initial Annual Inspection<br />n_obs: 3600<br />borough: QUEENS","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:    5<br />borough: QUEENS","general_category: Monitoring Inspection Non-Routine<br />n_obs:  271<br />borough: QUEENS"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,176,246,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"QUEENS","legendgroup":"QUEENS","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9],"base":[0,0,0],"x":[1,2,4],"y":[37,471,165],"text":["general_category: Compliance Inspection of Open Violations<br />n_obs:   37<br />borough: STATEN ISLAND","general_category: Initial Annual Inspection<br />n_obs:  471<br />borough: STATEN ISLAND","general_category: Monitoring Inspection Non-Routine<br />n_obs:  165<br />borough: STATEN ISLAND"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(231,107,243,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"STATEN ISLAND","legendgroup":"STATEN ISLAND","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.7625570776256,"r":7.30593607305936,"b":182.170417329056,"l":48.9497716894977},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Inspection categories vs. borough","font":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Compliance Inspection of Open Violations","Initial Annual Inspection","Lead Based Paint or Lead in Water Inspection","Monitoring Inspection Non-Routine"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Compliance Inspection of Open Violations","Initial Annual Inspection","Lead Based Paint or Lead in Water Inspection","Monitoring Inspection Non-Routine"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"inspection categories","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-539.4,11327.4],"tickmode":"array","ticktext":["0","3000","6000","9000"],"tickvals":[0,3000,6000,9000],"categoryorder":"array","categoryarray":["0","3000","6000","9000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"number of violations","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"borough","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"12d3a6249b9a1":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"12d3a6249b9a1","visdat":{"12d3a6249b9a1":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>general type vs borough</p>
+<pre class="r"><code>inspec_general_borough_sumary&lt;-
+borough_inspec_summmary%&gt;%
+group_by(general_category,borough)%&gt;%
+summarise(
+n_obs=sum(n_obs)
+)
+inspec_general_borough_sumary</code></pre>
+<pre><code>## # A tibble: 19 × 3
+## # Groups:   general_category [4]
+##    general_category                             borough       n_obs
+##    &lt;chr&gt;                                        &lt;chr&gt;         &lt;int&gt;
+##  1 Compliance Inspection of Open Violations     BRONX           552
+##  2 Compliance Inspection of Open Violations     BROOKLYN        497
+##  3 Compliance Inspection of Open Violations     MANHATTAN        74
+##  4 Compliance Inspection of Open Violations     QUEENS          442
+##  5 Compliance Inspection of Open Violations     STATEN ISLAND    37
+##  6 Initial Annual Inspection                    BRONX          1670
+##  7 Initial Annual Inspection                    BROOKLYN       3148
+##  8 Initial Annual Inspection                    MANHATTAN      1899
+##  9 Initial Annual Inspection                    QUEENS         3600
+## 10 Initial Annual Inspection                    STATEN ISLAND   471
+## 11 Lead Based Paint or Lead in Water Inspection BRONX            10
+## 12 Lead Based Paint or Lead in Water Inspection BROOKLYN         11
+## 13 Lead Based Paint or Lead in Water Inspection MANHATTAN         6
+## 14 Lead Based Paint or Lead in Water Inspection QUEENS            5
+## 15 Monitoring Inspection Non-Routine            BRONX           331
+## 16 Monitoring Inspection Non-Routine            BROOKLYN        320
+## 17 Monitoring Inspection Non-Routine            MANHATTAN       546
+## 18 Monitoring Inspection Non-Routine            QUEENS          271
+## 19 Monitoring Inspection Non-Routine            STATEN ISLAND   165</code></pre>
+<p>The following chart can better understand the violation situation of
+different Boroughs in New York. We can see that queens has the most
+violation records, Brooklyn has less violation records than queens but
+still far more than bronx and Manhattan, and staten island has the least
+violation records.</p>
+<pre class="r"><code>violation_borough_sumary_all&lt;-
+inspec_general_borough_sumary%&gt;%
+ggplot(aes(x=borough,y=n_obs))+
+geom_bar(aes(fill=general_category),stat = &quot;identity&quot;)+
+theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y=&quot;number of violations&quot;,title=&quot;borough vs.Inspection categories&quot;,x=&quot;borough&quot;)
+  
+ggplotly(violation_borough_sumary_all)</code></pre>
+<div id="htmlwidget-adb22d08e9927a9217dc" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-adb22d08e9927a9217dc">{"x":{"data":[{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[2011,3479,2451,3876,636],"x":[1,2,3,4,5],"y":[552,497,74,442,37],"text":["borough: BRONX<br />n_obs:  552<br />general_category: Compliance Inspection of Open Violations","borough: BROOKLYN<br />n_obs:  497<br />general_category: Compliance Inspection of Open Violations","borough: MANHATTAN<br />n_obs:   74<br />general_category: Compliance Inspection of Open Violations","borough: QUEENS<br />n_obs:  442<br />general_category: Compliance Inspection of Open Violations","borough: STATEN ISLAND<br />n_obs:   37<br />general_category: Compliance Inspection of Open Violations"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Compliance Inspection of Open Violations","legendgroup":"Compliance Inspection of Open Violations","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[341,331,552,276,165],"x":[1,2,3,4,5],"y":[1670,3148,1899,3600,471],"text":["borough: BRONX<br />n_obs: 1670<br />general_category: Initial Annual Inspection","borough: BROOKLYN<br />n_obs: 3148<br />general_category: Initial Annual Inspection","borough: MANHATTAN<br />n_obs: 1899<br />general_category: Initial Annual Inspection","borough: QUEENS<br />n_obs: 3600<br />general_category: Initial Annual Inspection","borough: STATEN ISLAND<br />n_obs:  471<br />general_category: Initial Annual Inspection"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(124,174,0,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Initial Annual Inspection","legendgroup":"Initial Annual Inspection","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[331,320,546,271],"x":[1,2,3,4],"y":[10,11,6,5],"text":["borough: BRONX<br />n_obs:   10<br />general_category: Lead Based Paint or Lead in Water Inspection","borough: BROOKLYN<br />n_obs:   11<br />general_category: Lead Based Paint or Lead in Water Inspection","borough: MANHATTAN<br />n_obs:    6<br />general_category: Lead Based Paint or Lead in Water Inspection","borough: QUEENS<br />n_obs:    5<br />general_category: Lead Based Paint or Lead in Water Inspection"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Lead Based Paint or Lead in Water Inspection","legendgroup":"Lead Based Paint or Lead in Water Inspection","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[0,0,0,0,0],"x":[1,2,3,4,5],"y":[331,320,546,271,165],"text":["borough: BRONX<br />n_obs:  331<br />general_category: Monitoring Inspection Non-Routine","borough: BROOKLYN<br />n_obs:  320<br />general_category: Monitoring Inspection Non-Routine","borough: MANHATTAN<br />n_obs:  546<br />general_category: Monitoring Inspection Non-Routine","borough: QUEENS<br />n_obs:  271<br />general_category: Monitoring Inspection Non-Routine","borough: STATEN ISLAND<br />n_obs:  165<br />general_category: Monitoring Inspection Non-Routine"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(199,124,255,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Monitoring Inspection Non-Routine","legendgroup":"Monitoring Inspection Non-Routine","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.7625570776256,"r":7.30593607305936,"b":74.384604277993,"l":48.9497716894977},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"borough vs.Inspection categories","font":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,5.6],"tickmode":"array","ticktext":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"borough","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-215.9,4533.9],"tickmode":"array","ticktext":["0","1000","2000","3000","4000"],"tickvals":[0,1000,2000,3000,4000],"categoryorder":"array","categoryarray":["0","1000","2000","3000","4000"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"number of violations","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"general_category","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"12d3a1d50b282":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"12d3a1d50b282","visdat":{"12d3a1d50b282":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

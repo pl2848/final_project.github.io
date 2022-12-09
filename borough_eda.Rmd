@@ -1,0 +1,130 @@
+---
+title: "Borough - Violation"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(data.table)
+library(tidyverse)
+library(patchwork)
+library(plotly)
+library(haven)
+raw_data<-read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
+```
+
+filter the variables to include currently permitted Children Care Center
+Question: should we consider permitted (17356) or permitted+ active (3399)(school)
+
+step1:filter the inspection record for only currently permitted Children Care Center
+step2:remove the useless variables: legal_name, building, street, phone, permit_number, permid_expiration, day care id, url, date_permitted, actual.
+
+```{r}
+Childcare_center<-
+  raw_data%>%
+  janitor::clean_names() %>%
+  filter(status=="Permitted")%>%
+  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+         -day_care_id,-url,-date_permitted,-actual)%>%
+  drop_na(violation_rate_percent)%>%
+  drop_na(public_health_hazard_violation_rate)
+
+```
+
+We investigated the severity of the presence of violation records in different types of inspections. The data graphs show that no-violation is the most frequent among the different types of inspections, and general violation is the highest among the inspections of initial annual inspection and monitoring inspection non-routine, except for no-violation. On the contrary, in the compliance inspection of open violations, critical cases are indeed more than general. lead based paint or lead in water inspection, although the number is small, we can still see that most of them are no-violation. 
+```{r}
+inspec_violation_summary<-
+  Childcare_center%>%
+select(borough,inspection_summary_result,violation_category)%>%
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category))%>%
+drop_na(inspection_summary_result)%>%
+  mutate(
+general_category=case_when(
+inspection_summary_result %like% "^Compliance Inspection of Open Violations" ~"Compliance Inspection of Open Violations",
+inspection_summary_result %like% "^Initial Annual Inspection" ~"Initial Annual Inspection",
+inspection_summary_result %like% "^Lead Based Paint or Lead in Water Inspection" ~"Lead Based Paint or Lead in Water Inspection",
+inspection_summary_result %like% "^Monitoring Inspection Non-Routine" ~"Monitoring Inspection Non-Routine")
+)%>%
+  group_by(general_category,violation_category)%>%
+  summarise(
+    n_obs=n()
+  )%>%
+  ggplot(aes(fill =violation_category, x=general_category,y = n_obs))+
+  geom_bar(position = "dodge", stat = "identity")+
+theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y="number of violations",title="Inspection categories vs.violation categories",x="inspection categories")
+  
+ggplotly(inspec_violation_summary)
+
+
+```
+
+borough vs. inspection summary result 
+
+We examined the inspection categories of child care centers in different areas of New York that had records of violations，We found that the categories of inspection are divided into four major categories, which are Compliance Inspection of Open Violations, Initial Annual Inspection, Lead Based Paint or Lead in Water Inspection, Monitoring Inspection Non-Routine.
+```{r}
+borough_inspec_summmary<-
+  Childcare_center%>%
+  select(borough,inspection_summary_result)%>%
+  drop_na(inspection_summary_result)%>%
+  group_by(borough,inspection_summary_result)%>%
+  summarise(
+    n_obs=n()
+  )%>%
+  mutate(
+    general_category=case_when(
+      inspection_summary_result %like% "^Compliance Inspection of Open Violations" ~"Compliance Inspection of Open Violations",
+      inspection_summary_result %like% "^Initial Annual Inspection" ~"Initial Annual Inspection",
+      inspection_summary_result %like% "^Lead Based Paint or Lead in Water Inspection" ~"Lead Based Paint or Lead in Water Inspection",
+      inspection_summary_result %like% "^Monitoring Inspection Non-Routine" ~"Monitoring Inspection Non-Routine")
+  )
+```
+To better examine the number of violations in different types of inspections at child care centers in different borough of New York, we categorized and summarise the records of violation inspections by borough and type of inspection.
+
+borough group by general_category
+```{r}
+borough_inspec_general_sumary<-
+  borough_inspec_summmary%>%
+  group_by(borough,general_category)%>%
+  summarise(
+    n_obs=sum(n_obs)
+  )
+borough_inspec_general_sumary
+```
+We also created the following chart by type of inspection and the number of violations recorded. We found that New York's child care centers had the highest number of violations in the intial annual inspection, far exceeding the other three types of violations combined, with the Queen's district having the highest number of violations at 3,600 records. In contrast, Lead Based Paint or Lead in Water Inspection had the least number of violations, with bronx having ten records, Brooklyn having eleven records, Manhattan having six records, queens having five records, and staten island not even having this type of record.
+
+```{r}
+borough_inspec_general_sumary_plot_all<-
+  borough_inspec_general_sumary%>%
+  ggplot(aes(x=general_category,y=n_obs),)+
+  geom_bar(aes(fill = borough), stat = "identity")+
+  theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y="number of violations",title="Inspection categories vs. borough",x="inspection categories")
+  
+ggplotly(borough_inspec_general_sumary_plot_all)
+```
+
+general type vs borough
+
+```{r, warning=FALSE, message=FALSE}
+inspec_general_borough_sumary<-
+borough_inspec_summmary%>%
+group_by(general_category,borough)%>%
+summarise(
+n_obs=sum(n_obs)
+)
+inspec_general_borough_sumary
+```
+
+The following chart can better understand the violation situation of different Boroughs in New York. We can see that queens has the most violation records, Brooklyn has less violation records than queens but still far more than bronx and Manhattan, and staten island has the least violation records.
+```{r}
+violation_borough_sumary_all<-
+inspec_general_borough_sumary%>%
+ggplot(aes(x=borough,y=n_obs))+
+geom_bar(aes(fill=general_category),stat = "identity")+
+theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y="number of violations",title="borough vs.Inspection categories",x="borough")
+  
+ggplotly(violation_borough_sumary_all)
+```
