@@ -1,0 +1,388 @@
+---
+title: "Project Report "
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    
+---
+
+
+# Motivations
+
+
+Nowadays, children care center become a worldwide popular topic due to increasing working parents. Most working parents send their child to children care center during work time. In a high demand of request, selecting a safe and healthy children care environment is important.  However, some children care center still has severe safety and hygiene issues which NYC government classify them as violation according to their severity level. In this research, we are trying to investigate the violation in children care center in NYC based on the NYC Open data set for predicting occurrence of violation based on multiple socioeconomic variables. 
+
+
+
+# Related Work
+
+A healthy growing environment has been one of the five factors parents care about most when selecting a chilcare center. More specfically, parents are looking for a healthy and friendly environment beneficial for childhood growth. However, safety and hygiene issues happen frequently in New York childcare centers, triggering harms to children. Inspired by this idea, we focus on investigating violations in New York childcare center to help evalute safety and hygiene conditions of childcare centers. This study is conducted based on  NYC Open dataset to predict occurrence of violation based on multiple socioeconomic variables. 
+
+
+
+
+
+
+
+
+
+# Initial Questions
+
+
+Our initial question focuses on how socioeconomics factors are related to childcare violation in New York. We investigated multiple factors such as borough and childcare type to create a more lucid analysis of occurrence of childcare violation. Specifically, we evaluates borough with high occurrence of violation and childcare types for which most violation occurs. Further details related to the study will be presented in other parts of the websites. 
+
+
+
+
+
+ 
+# Data
+
+We filter the variables to include currently permitted Children Care Center
+
+For the next step,we remove the useless variables: legal_name, building, street, phone, permit_number, permid_expiration, day care id, url, date_permitted, actual. In addition, we filter out the program type ALL AGE CAMP which has only three data for further lucidification during data analysis. 
+
+
+
+```{r}
+library(tidyverse)
+library(patchwork)
+library(plotly)
+library(haven)
+library(viridis)
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom",
+                                  legend.text = element_text(size = 8),
+                                  legend.title = element_text(size = 9),
+                                  legend.key.size = unit(.5,"line")))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+
+
+```
+
+
+```{r, include = FALSE}
+raw_data = read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
+```
+
+```{r, include = FALSE}
+Childcare_center = raw_data%>%
+  janitor::clean_names() %>%
+  filter(status=="Permitted")%>%
+  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+         -day_care_id,-url,-date_permitted,-actual)%>%
+  drop_na(violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate, violation_status, age_range) %>% 
+  filter(age_range != "0 YEARS - 16 YEARS", program_type !="CAMP") %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category))
+Childcare_center
+```
+
+
+
+# Exploratory Analysis
+
+
+
+```{r, include = FALSE}
+Childcare_center %>% 
+  select(age_range, violation_category) %>% 
+  filter(age_range == "2 YEARS - 5 YEARS") 
+```
+
+In order to illustrate association between age range, program type and violation category. We plotted multiple graphs 
+below.
+
+
+
+
+```{r}
+### Age Range vs Violation Category
+Childcare_center %>% 
+  group_by(age_range) %>% 
+  count(violation_category) %>% 
+  ggplot(aes(fill =violation_category, x=age_range,y = n))+
+  geom_bar(position = "dodge", stat = "identity")
+```
+Age range is the same as the program type violation.(graph below)
+
+
+
+
+```{r}
+### Program Type vs Violation Category
+Childcare_center %>% 
+  group_by(program_type) %>% 
+  count(violation_category) %>% 
+  ggplot(aes(fill =violation_category, x=program_type,y = n))+
+  geom_bar(position = "dodge", stat = "identity")
+```
+
+After analysing the data we found that the age-range and program type relationship is the same. Infant school is for 0-2 years kids and preschool is for 0-5 years kids. The graph above showing the relationship between the program type (Preschool&Infant Toddler) and the violation category cases(Critial, General, No Violation and Public Health Hazrd). As we can see from the graph, preschool has a higher violation cases in the categoy "public health hazard", "general" and "critical" than the Infant todddler program type. And in three violation categories, the "general" cases is higher then the other two. 
+
+
+
+Borough is another significant geographical factor for analyzing violation. We examine connection between borough and violations. 
+
+
+We examined the inspection categories of child care centers in different areas of New York that had records of violations，We found that the categories of inspection are divided into four major categories, which are Compliance Inspection of Open Violations, Initial Annual Inspection, Lead Based Paint or Lead in Water Inspection, Monitoring Inspection Non-Routine.
+```{r, warning=FALSE, message=FALSE}
+### Borough vs. Inspection summary result 
+borough_inspec_summmary<-
+  Childcare_center%>%
+  select(borough,inspection_summary_result)%>%
+  drop_na(inspection_summary_result)%>%
+  group_by(borough,inspection_summary_result)%>%
+  summarise(
+    n_obs=n()
+  )%>%
+  mutate(
+    general_category=case_when(
+      inspection_summary_result %like% "^Compliance Inspection of Open Violations" ~"Compliance Inspection of Open Violations",
+      inspection_summary_result %like% "^Initial Annual Inspection" ~"Initial Annual Inspection",
+      inspection_summary_result %like% "^Lead Based Paint or Lead in Water Inspection" ~"Lead Based Paint or Lead in Water Inspection",
+      inspection_summary_result %like% "^Monitoring Inspection Non-Routine" ~"Monitoring Inspection Non-Routine")
+  )
+head(borough_inspec_summmary)
+```
+
+To better examine the number of violations in different types of inspections at child care centers in different borough of New York, we categorized and summarise the records of violation inspections by borough and type of inspection.
+
+```{r, warning=FALSE, message=FALSE}
+### Borough group by General Category
+borough_inspec_general_sumary<-
+  borough_inspec_summmary%>%
+  group_by(borough,general_category)%>%
+  summarise(
+    n_obs=sum(n_obs)
+  ) %>% 
+  arrange(desc(n_obs)) 
+borough_inspec_general_sumary
+```
+
+We also created the following chart by type of inspection and the number of violations recorded. We found that New York's child care centers had the highest number of violations in the intial annual inspection, far exceeding the other three types of violations combined, with the Queen's district having the highest number of violations at 3,600 records. In contrast, Lead Based Paint or Lead in Water Inspection had the least number of violations, with bronx having ten records, Brooklyn having eleven records, Manhattan having six records, queens having five records, and staten island not even having this type of record.
+
+```{r}
+borough_inspec_general_sumary_plot_all<-
+  borough_inspec_general_sumary%>%
+  ggplot(aes(x=general_category,y=n_obs),)+
+  geom_bar(aes(fill = borough), stat = "identity")+
+  theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y="number of violations",title="Inspection categories vs. Borough",x="inspection categories")
+  
+ggplotly(borough_inspec_general_sumary_plot_all)
+```
+
+
+
+```{r, warning=FALSE, message=FALSE}
+### General Type vs Borough
+inspec_general_borough_sumary<-
+borough_inspec_summmary%>%
+group_by(general_category,borough)%>%
+summarise(
+n_obs=sum(n_obs)
+) %>% 
+  arrange(desc(n_obs)) 
+inspec_general_borough_sumary
+```
+
+The following chart can better understand the violation situation of different Boroughs in New York. We can see that queens has the most violation records, Brooklyn has less violation records than queens but still far more than bronx and Manhattan, and staten island has the least violation records.
+```{r}
+violation_borough_sumary_all<-
+inspec_general_borough_sumary%>%
+ggplot(aes(x=borough,y=n_obs))+
+geom_bar(aes(fill=general_category),stat = "identity")+
+theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y="number of violations",title="Borough vs.Inspection categories",x="borough")
+  
+ggplotly(violation_borough_sumary_all)
+```
+
+```{r}
+### Borough vs Violation Category
+Childcare_center %>% 
+  mutate(violation_category = ifelse(is.na(violation_category), "NO VIOLATION", violation_category)) %>% 
+  group_by(borough, age_range) %>% 
+  count(violation_category) %>% 
+  ggplot(aes(fill =violation_category, x=borough,y = n))+
+  geom_bar(position = "dodge", stat = "identity")
+```
+
+The graph above showing the relationship between the borough and the cases of violation in each category. From the grpah we can see, queens is the borough whihc has the most violation cases in all three categories and staten island has the least violation cases in all three categories. And in Brooklyn, it has the highest no violation cases. 
+
+```{r, warning=FALSE, message=FALSE }
+# try
+try = Childcare_center %>% 
+  mutate(violation_category = ifelse(is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  select(borough,program_type,violation_category)%>%
+  filter(program_type!="CAMP")%>%
+  group_by(borough, program_type,violation_category) %>% 
+  summarise(
+    n_obs=n())%>%
+  ggplot(aes(x = borough, y = n_obs, fill = violation_category))+
+  geom_bar(stat="identity", width = 0.5, position = "dodge")+
+  facet_grid(. ~ program_type) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 28),axis.text = element_text(size = 5))
+ggplotly(try) 
+```
+The graph above is showing the relationship between borough and the number of violation category count in two different program types. The borough can separate the five parts "Bronx", "Brooklyn", "Manhattan", "Staten Island" and "Queens". Violation category can be separate "Critical", "General", "No Violation" and "Public Helath Hazard". Combining two graphs, pre school will have a higher violation cases in each borough in overall. In infant toddler, Brooklyn is the borough that having the largest violation cases.But in preschool, queens is the borough that having the largest cases. Staten island has the smallest cases in both preschool and infant toddler.
+Footer
+
+
+
+
+# Additional Analysis
+
+
+Chi-squared test and ANOVA are conducted to examine significance of variable borough and program types for predicting violation occurrence.
+
+### Chi-Square test - Borough vs Violation Category
+program type and violation category to test the association between the two variables. 
+
+**H0:There is no association between program type and violation category**
+
+**H1:There is  association between program type and violation category**
+
+
+```{r, warning=FALSE, message=FALSE}
+tbl1=table(Childcare_center$borough,Childcare_center$violation_category)
+chisq.test(tbl1)
+chisq.test(tbl1)%>% 
+  broom::tidy() %>% 
+  knitr::kable()
+```
+There is significant relationship between program type and violation category suggested by the computed p-value much lower than 0.05
+
+
+### Chi-Square test - Program Types vs Violation Category
+We conducted a chi-squared test between childcare type and violation category to test the association between the two variables. 
+
+**H0:There is no association between childcare type and violation category**
+
+**H1:There is  association between childcare type and violation category**
+
+
+```{r, warning=FALSE, message=FALSE}
+tbl2=table(Childcare_center$child_care_type,Childcare_center$violation_category)
+chisq.test(tbl2)
+chisq.test(tbl2) %>% 
+  broom::tidy() %>% 
+  knitr::kable()
+```
+
+There is significant relationship between childcare type and violation category suggested by the computed p-value much lower than 0.05
+
+
+### ANOVA Test - Borough and Violation
+
+ We want to examining the relationship between the mean of total violation event (GENERAL+CRITICAL+PUBLIC HEALTH HAZARD) and borough. The frequency of violation events were separated by five boroughs (Manhattan, Brooklyn, Queens, Staten Island, Bronx).  
+
+
+**H0: The mean of violation are not different across borough**
+
+**H1: The mean of violation are different across borough**
+```{r}
+clean_1 = children_center<-
+  raw_data%>%
+  janitor::clean_names()%>%
+  mutate(
+    center_name=tolower(center_name),
+    center_name=gsub('[[:punct:] ]+',' ',center_name),
+    center_name=gsub(" ","",center_name),
+    center_name=gsub("llc","",center_name),
+    center_name=gsub("inc","",center_name),
+    center_name=gsub("th","",center_name),
+    center_name=gsub("school","",center_name),
+    center_name=gsub("center","",center_name),
+    center_name=gsub("ctr","",center_name)
+  )%>%
+  filter(status=="Permitted") %>% 
+  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %>%
+   filter(violation_category != "NO VIOLATION") %>% 
+  mutate(violation_category = "VIOLATION") %>% 
+  group_by(center_name,borough) %>% 
+  count() 
+fit = lm(n~ borough, data = clean_1)
+anova(fit) %>% 
+  knitr::kable(caption = "One way anova of Violation frequency and Brough")
+```
+The p-value is very small(p<0.05). We reject the null hypothesis and saying that there is enough evidence the mean of violation are **different across borough**. 
+
+
+After validating the significance of age range and program type, we constructed a logistics regression model for predicting violation occurrence. 
+
+### Logistic Regression
+To predict whether a childcare facility will violate or not, we fit the data to a logistic regression model. 
+
+
+Our model is shown below:
+```{r, warning=FALSE, message=FALSE}
+# New dataset for modelling
+childcare_model <- Childcare_center %>% 
+  mutate(violation_category = ifelse(is.na(violation_category), 0, 1),
+         borough = as.factor(borough)) %>% # 0 is no liolation, 1 is with violation
+  select(borough,child_care_type,total_educational_workers,maximum_capacity, violation_category)
+# fit logistic reg
+logistic_model = childcare_model %>% 
+  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) %>% 
+  broom::tidy() %>% 
+  knitr::kable(caption = "Effect of Predictors on Violation Status")
+logistic_model
+```
+As we can see in the summary, all predictors are significant with p value < 0.01, suggesting association with violation status. Different borough has different coefficients, suggesting regional difference in violation status. The odds of violation for childcare center in Bronx is 0.469, holding all other variables constant.For each of the other borough, the coefficient tells us that the log-odds of violation for a given group is smaller than that of the reference group.
+
+We also used a simple method to test our model accuracy.Firstly, I split our dataset to training and testing dataset, and then fit the model using the training data, and test for accuracy using testing data. Lastly, I used confusion matrix to access our logistic model.
+
+```{r, warning=FALSE, message=FALSE}
+library(rsample)   # for data splitting
+# Modeling packages
+library(caret)     # for logistic regression modeling
+# Model interpretability packages
+library(vip)       # variable importance
+childcare_split <- initial_split(childcare_model, prop = .7)
+childcare_train <- training(childcare_split)
+childcare_test  <- testing(childcare_split)
+set.seed(123)
+# predict violation using model
+# fit logistic reg
+logistic_model_train = childcare_train %>% 
+  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
+logistics_predict = predict(logistic_model_train, childcare_test, type = 'response')
+# convert predicted value to TRUE/FALSE
+childcare_test$predict_violation = ifelse(logistics_predict >= .5, 1, 0)
+# Used confusion matrix to measure model performance
+confusion_data = childcare_test %>% 
+  select(predict_violation, violation_category) %>% 
+  mutate(predict_violation = as.factor(predict_violation), violation_category = as.factor(violation_category))
+confusionMatrix(data=confusion_data$predict_violation, reference = confusion_data$violation_category) %>% 
+  broom::tidy() %>% 
+  select(term, estimate) %>% 
+  filter(term %in% c("accuracy", "kappa", "sensitivity", "specificity", "f1")) %>% 
+  knitr::kable(caption = "Measuring Model Performance ")
+```
+
+It turns out that our model has accuracy rate of 62%, with Kappa coefficient at around 0.24. This means that the predictability of our model is relatively week. But the significance of our predictors indicating that borough, childcare types and maximum capacity are all associated with violation. The reason behind regional disparities in violation should be investigated in the future.
+
+
+The main reason for our weak predictability is that we lack of essential predictors for the model. Combined with the top 10 violation summary we analyzed before, useful information may include: hours of training, celling and floor maintance frequecny, stuff medical clearance status, etc.
+
+
+
+
+
+# Discussion
+
+
+Although relatively weak predictability is observed for this logistic regression model with accuracy rate of 62% and Kappa coefficient at around 0.24, it is suggested that borough, childcare type and maximum capacity are all connected with violation and could potentially be estimators of violation occurrence. Aiming at constructing a more accurate model, more related variables should be taken into consideration to refine violation prediction.  

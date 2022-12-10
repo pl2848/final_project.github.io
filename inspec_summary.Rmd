@@ -38,7 +38,7 @@ Childcare_center<-
 ```
 
 We investigated the severity of the presence of violation records in different types of inspections. The data graphs show that no-violation is the most frequent among the different types of inspections, and general violation is the highest among the inspections of initial annual inspection and monitoring inspection non-routine, except for no-violation. On the contrary, in the compliance inspection of open violations, critical cases are indeed more than general. lead based paint or lead in water inspection, although the number is small, we can still see that most of them are no-violation. 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 inspec_violation_summary<-
   Childcare_center%>%
 select(borough,inspection_summary_result,violation_category)%>%

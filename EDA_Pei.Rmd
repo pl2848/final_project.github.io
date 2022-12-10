@@ -5,11 +5,6 @@ output: html_document
 
 
 ```{r setup, include=FALSE}
-library(viridis)
-options(
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis"
-)
 library(tidyverse)
 library(ggridges)
 library(dplyr)
@@ -21,17 +16,18 @@ knitr::opts_chunk$set(
   fig.asp = .6,
   out.width = "90%"
 )
-theme_set(theme_minimal() + theme(legend.position = "bottom",
-                                  legend.text = element_text(size = 8),
-                                  legend.title = element_text(size = 9),
-                                  legend.key.size = unit(.5,"line")))
 options(
   ggplot2.continuous.colour = "viridis",
   ggplot2.continuous.fill = "viridis"
 )
-scale_colour_discrete = scale_colour_viridis_d
-scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom",
+                                  legend.text = element_text(size = 8),
+                                  legend.title = element_text(size = 9),
+                                  legend.key.size = unit(.5,"line")))
 ```
+
+
+
 
 
 ```{r, include=FALSE}
@@ -59,7 +55,7 @@ We can see from the following boxplot that the distributions maximum capacity in
 ```{r}
 plotly_capacity_type = Childcare_center %>% 
   group_by(violation_category, maximum_capacity, child_care_type) %>%
-  plot_ly(y = ~maximum_capacity, color = ~child_care_type, type = "box", colors = "viridis")
+  plot_ly(y = ~maximum_capacity, color = ~child_care_type, type = "box", colors = "viridis") 
 plotly_capacity_type
 ```
 
@@ -165,7 +161,7 @@ As we can see, there's no significant different within each child care type. But
 plotly_capacity_type = Childcare_center %>% 
   mutate(workers_per_child = total_educational_workers/maximum_capacity) %>% 
   group_by(workers_per_child, violation_category, child_care_type) %>% 
-  plot_ly(y = ~workers_per_child, type = "box", x = ~violation_category, color = ~child_care_type,colors = "viridis") %>% 
+  plot_ly(y = ~workers_per_child, type = "box", x = ~violation_category, color = ~child_care_type,  colors = "viridis") %>%
   layout(boxmode = "group")
 plotly_capacity_type
 ```

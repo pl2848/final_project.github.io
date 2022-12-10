@@ -11,7 +11,7 @@
 
 
 
-<title>final_report</title>
+<title>Project Report</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -36,6 +36,13 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.0/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.5.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.5.1/plotly-latest.min.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -390,46 +397,653 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">final_report</h1>
+<h1 class="title toc-ignore">Project Report</h1>
 
 </div>
 
 
-<p>Introduction: Nowadays, children care center become a worldwide
-popular topic by the working parents increasing. Most people choose to
-put their child to the children care center during their working time.
-In a high demand of request, choosing a safe and healthy children care
-environment is important. However, some children care center still has
-the severe food safety and cooking environment problems which NYC
-government determine them as violation according to their severe level.
-In our research, we try to investigate the cafeteria violation in
-children care center in NYC using the NYC Open data set.</p>
-<p>Method:</p>
-<p>Results:</p>
-<p>Discussion: For the cafeteria violation category, the data set
-separate three parts “general violation”, “critical violation” and
-“public health hazard” by NYC government. Inspectors check for food
-handling, food temperature, personal hygiene, facility and equipment
-maintenance and vermin control. General violation is some event like not
-properly sanitizing cooking utensils. And violation like serving raw
-food such as a salad without properly washing it first can be critical
-violation. A public health hazard can be some event like failing to keep
-food at the right temperature. If the violation can’t be corrected
-before the inspection ends, the Health Department may close the
-restaurant until it’s fixed.</p>
-<p>Limitation: There are several limitations we encountered in our
-research. The major challenge would be the target variables
-determination. There are several columns we thought we could use as our
-target numerical variables. But after we analysis, we found that
-“violation rate percent”, “public health hazard violation rate”,
-“average public health hazard violation”, “critical violation rate” and
-“average critical violation rate” are categorical number data which
-limits our data analysis part. Additionally, for the map part, we want
-to map the violation cases in each children care center in NYC. It can
-represent the data more precise. But for our data set, it doesn’t have
-the latitude and longitude which make us hard to map as point units to
-determine the location.</p>
-<p>Reference:</p>
+<div id="motivations" class="section level1">
+<h1>Motivations</h1>
+<p>Nowadays, children care center become a worldwide popular topic due
+to increasing working parents. Most working parents send their child to
+children care center during work time. In a high demand of request,
+selecting a safe and healthy children care environment is important.
+However, some children care center still has severe safety and hygiene
+issues which NYC government classify them as violation according to
+their severity level. In this research, we are trying to investigate the
+violation in children care center in NYC based on the NYC Open data set
+for predicting occurrence of violation based on multiple socioeconomic
+variables.</p>
+</div>
+<div id="related-work" class="section level1">
+<h1>Related Work</h1>
+<p>A healthy growing environment has been one of the five factors
+parents care about most when selecting a chilcare center. More
+specfically, parents are looking for a healthy and friendly environment
+beneficial for childhood growth. However, safety and hygiene issues
+happen frequently in New York childcare centers, triggering harms to
+children. Inspired by this idea, we focus on investigating violations in
+New York childcare center to help evalute safety and hygiene conditions
+of childcare centers. This study is conducted based on NYC Open dataset
+to predict occurrence of violation based on multiple socioeconomic
+variables.</p>
+</div>
+<div id="initial-questions" class="section level1">
+<h1>Initial Questions</h1>
+<p>Our initial question focuses on how socioeconomics factors are
+related to childcare violation in New York. We investigated multiple
+factors such as borough and childcare type to create a more lucid
+analysis of occurrence of childcare violation. Specifically, we
+evaluates borough with high occurrence of violation and childcare types
+for which most violation occurs. Further details related to the study
+will be presented in other parts of the websites.</p>
+</div>
+<div id="data" class="section level1">
+<h1>Data</h1>
+<p>We filter the variables to include currently permitted Children Care
+Center</p>
+<p>For the next step,we remove the useless variables: legal_name,
+building, street, phone, permit_number, permid_expiration, day care id,
+url, date_permitted, actual. In addition, we filter out the program type
+ALL AGE CAMP which has only three data for further lucidification during
+data analysis.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
+## ✔ readr   2.1.2      ✔ forcats 0.5.2 
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(patchwork)
+library(plotly)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;plotly&#39;
+## 
+## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     last_plot
+## 
+## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter
+## 
+## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     layout</code></pre>
+<pre class="r"><code>library(haven)
+library(viridis)</code></pre>
+<pre><code>## Loading required package: viridisLite</code></pre>
+<pre class="r"><code>library(data.table)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;data.table&#39;
+## 
+## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     between, first, last
+## 
+## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     transpose</code></pre>
+<pre class="r"><code>options(
+  ggplot2.continuous.colour = &quot;viridis&quot;,
+  ggplot2.continuous.fill = &quot;viridis&quot;
+)
+theme_set(theme_minimal() + theme(legend.position = &quot;bottom&quot;,
+                                  legend.text = element_text(size = 8),
+                                  legend.title = element_text(size = 9),
+                                  legend.key.size = unit(.5,&quot;line&quot;)))
+options(
+  ggplot2.continuous.colour = &quot;viridis&quot;,
+  ggplot2.continuous.fill = &quot;viridis&quot;
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d</code></pre>
+</div>
+<div id="exploratory-analysis" class="section level1">
+<h1>Exploratory Analysis</h1>
+<p>In order to illustrate association between age range, program type
+and violation category. We plotted multiple graphs below.</p>
+<pre class="r"><code>### Age Range vs Violation Category
+Childcare_center %&gt;% 
+  group_by(age_range) %&gt;% 
+  count(violation_category) %&gt;% 
+  ggplot(aes(fill =violation_category, x=age_range,y = n))+
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)</code></pre>
+<p><img src="final_report_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Age range is the same as the program type violation.(graph below)</p>
+<pre class="r"><code>### Program Type vs Violation Category
+Childcare_center %&gt;% 
+  group_by(program_type) %&gt;% 
+  count(violation_category) %&gt;% 
+  ggplot(aes(fill =violation_category, x=program_type,y = n))+
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)</code></pre>
+<p><img src="final_report_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>After analysing the data we found that the age-range and program type
+relationship is the same. Infant school is for 0-2 years kids and
+preschool is for 0-5 years kids. The graph above showing the
+relationship between the program type (Preschool&amp;Infant Toddler) and
+the violation category cases(Critial, General, No Violation and Public
+Health Hazrd). As we can see from the graph, preschool has a higher
+violation cases in the categoy “public health hazard”, “general” and
+“critical” than the Infant todddler program type. And in three violation
+categories, the “general” cases is higher then the other two.</p>
+<p>Borough is another significant geographical factor for analyzing
+violation. We examine connection between borough and violations.</p>
+<p>We examined the inspection categories of child care centers in
+different areas of New York that had records of violations，We found
+that the categories of inspection are divided into four major
+categories, which are Compliance Inspection of Open Violations, Initial
+Annual Inspection, Lead Based Paint or Lead in Water Inspection,
+Monitoring Inspection Non-Routine.</p>
+<pre class="r"><code>### Borough vs. Inspection summary result 
+borough_inspec_summmary&lt;-
+  Childcare_center%&gt;%
+  select(borough,inspection_summary_result)%&gt;%
+  drop_na(inspection_summary_result)%&gt;%
+  group_by(borough,inspection_summary_result)%&gt;%
+  summarise(
+    n_obs=n()
+  )%&gt;%
+  mutate(
+    general_category=case_when(
+      inspection_summary_result %like% &quot;^Compliance Inspection of Open Violations&quot; ~&quot;Compliance Inspection of Open Violations&quot;,
+      inspection_summary_result %like% &quot;^Initial Annual Inspection&quot; ~&quot;Initial Annual Inspection&quot;,
+      inspection_summary_result %like% &quot;^Lead Based Paint or Lead in Water Inspection&quot; ~&quot;Lead Based Paint or Lead in Water Inspection&quot;,
+      inspection_summary_result %like% &quot;^Monitoring Inspection Non-Routine&quot; ~&quot;Monitoring Inspection Non-Routine&quot;)
+  )
+head(borough_inspec_summmary)</code></pre>
+<pre><code>## # A tibble: 6 × 4
+## # Groups:   borough [1]
+##   borough inspection_summary_result                                n_obs gener…¹
+##   &lt;chr&gt;   &lt;chr&gt;                                                    &lt;int&gt; &lt;chr&gt;  
+## 1 BRONX   Compliance Inspection of Open Violations - Passed inspe…    96 Compli…
+## 2 BRONX   Compliance Inspection of Open Violations - Previously c…    29 Compli…
+## 3 BRONX   Compliance Inspection of Open Violations - Previously c…     3 Compli…
+## 4 BRONX   Compliance Inspection of Open Violations - Reinspection…    48 Compli…
+## 5 BRONX   Compliance Inspection of Open Violations - Reinspection…    94 Compli…
+## 6 BRONX   Compliance Inspection of Open Violations - Reinspection…    92 Compli…
+## # … with abbreviated variable name ¹​general_category</code></pre>
+<p>To better examine the number of violations in different types of
+inspections at child care centers in different borough of New York, we
+categorized and summarise the records of violation inspections by
+borough and type of inspection.</p>
+<pre class="r"><code>### Borough group by General Category
+borough_inspec_general_sumary&lt;-
+  borough_inspec_summmary%&gt;%
+  group_by(borough,general_category)%&gt;%
+  summarise(
+    n_obs=sum(n_obs)
+  ) %&gt;% 
+  arrange(desc(n_obs)) 
+borough_inspec_general_sumary</code></pre>
+<pre><code>## # A tibble: 19 × 3
+## # Groups:   borough [5]
+##    borough       general_category                             n_obs
+##    &lt;chr&gt;         &lt;chr&gt;                                        &lt;int&gt;
+##  1 QUEENS        Initial Annual Inspection                     3208
+##  2 BROOKLYN      Initial Annual Inspection                     2852
+##  3 MANHATTAN     Initial Annual Inspection                     1687
+##  4 BRONX         Initial Annual Inspection                     1586
+##  5 BRONX         Compliance Inspection of Open Violations       521
+##  6 MANHATTAN     Monitoring Inspection Non-Routine              468
+##  7 BROOKLYN      Compliance Inspection of Open Violations       457
+##  8 STATEN ISLAND Initial Annual Inspection                      401
+##  9 QUEENS        Compliance Inspection of Open Violations       390
+## 10 BROOKLYN      Monitoring Inspection Non-Routine              301
+## 11 BRONX         Monitoring Inspection Non-Routine              284
+## 12 QUEENS        Monitoring Inspection Non-Routine              249
+## 13 STATEN ISLAND Monitoring Inspection Non-Routine              141
+## 14 MANHATTAN     Compliance Inspection of Open Violations        68
+## 15 STATEN ISLAND Compliance Inspection of Open Violations        32
+## 16 BRONX         Lead Based Paint or Lead in Water Inspection    10
+## 17 BROOKLYN      Lead Based Paint or Lead in Water Inspection    10
+## 18 MANHATTAN     Lead Based Paint or Lead in Water Inspection     6
+## 19 QUEENS        Lead Based Paint or Lead in Water Inspection     5</code></pre>
+<p>We also created the following chart by type of inspection and the
+number of violations recorded. We found that New York’s child care
+centers had the highest number of violations in the intial annual
+inspection, far exceeding the other three types of violations combined,
+with the Queen’s district having the highest number of violations at
+3,600 records. In contrast, Lead Based Paint or Lead in Water Inspection
+had the least number of violations, with bronx having ten records,
+Brooklyn having eleven records, Manhattan having six records, queens
+having five records, and staten island not even having this type of
+record.</p>
+<pre class="r"><code>borough_inspec_general_sumary_plot_all&lt;-
+  borough_inspec_general_sumary%&gt;%
+  ggplot(aes(x=general_category,y=n_obs),)+
+  geom_bar(aes(fill = borough), stat = &quot;identity&quot;)+
+  theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y=&quot;number of violations&quot;,title=&quot;Inspection categories vs. Borough&quot;,x=&quot;inspection categories&quot;)
+  
+ggplotly(borough_inspec_general_sumary_plot_all)</code></pre>
+<div id="htmlwidget-863003fe8a26758bd4c7" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-863003fe8a26758bd4c7">{"x":{"data":[{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[8148,947,1159,21],"x":[2,1,4,3],"y":[1586,521,284,10],"text":["general_category: Initial Annual Inspection<br />n_obs: 1586<br />borough: BRONX","general_category: Compliance Inspection of Open Violations<br />n_obs:  521<br />borough: BRONX","general_category: Monitoring Inspection Non-Routine<br />n_obs:  284<br />borough: BRONX","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:   10<br />borough: BRONX"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(68,1,84,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"BRONX","legendgroup":"BRONX","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[5296,490,858,11],"x":[2,1,4,3],"y":[2852,457,301,10],"text":["general_category: Initial Annual Inspection<br />n_obs: 2852<br />borough: BROOKLYN","general_category: Compliance Inspection of Open Violations<br />n_obs:  457<br />borough: BROOKLYN","general_category: Monitoring Inspection Non-Routine<br />n_obs:  301<br />borough: BROOKLYN","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:   10<br />borough: BROOKLYN"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(59,82,139,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"BROOKLYN","legendgroup":"BROOKLYN","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[3609,390,422,5],"x":[2,4,1,3],"y":[1687,468,68,6],"text":["general_category: Initial Annual Inspection<br />n_obs: 1687<br />borough: MANHATTAN","general_category: Monitoring Inspection Non-Routine<br />n_obs:  468<br />borough: MANHATTAN","general_category: Compliance Inspection of Open Violations<br />n_obs:   68<br />borough: MANHATTAN","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:    6<br />borough: MANHATTAN"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(33,144,140,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"MANHATTAN","legendgroup":"MANHATTAN","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[401,32,141,0],"x":[2,1,4,3],"y":[3208,390,249,5],"text":["general_category: Initial Annual Inspection<br />n_obs: 3208<br />borough: QUEENS","general_category: Compliance Inspection of Open Violations<br />n_obs:  390<br />borough: QUEENS","general_category: Monitoring Inspection Non-Routine<br />n_obs:  249<br />borough: QUEENS","general_category: Lead Based Paint or Lead in Water Inspection<br />n_obs:    5<br />borough: QUEENS"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(93,200,99,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"QUEENS","legendgroup":"QUEENS","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9],"base":[0,0,0],"x":[2,4,1],"y":[401,141,32],"text":["general_category: Initial Annual Inspection<br />n_obs:  401<br />borough: STATEN ISLAND","general_category: Monitoring Inspection Non-Routine<br />n_obs:  141<br />borough: STATEN ISLAND","general_category: Compliance Inspection of Open Violations<br />n_obs:   32<br />borough: STATEN ISLAND"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(253,231,37,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"STATEN ISLAND","legendgroup":"STATEN ISLAND","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.7625570776256,"r":7.30593607305936,"b":182.170417329056,"l":54.7945205479452},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Inspection categories vs. Borough","font":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,4.6],"tickmode":"array","ticktext":["Compliance Inspection of Open Violations","Initial Annual Inspection","Lead Based Paint or Lead in Water Inspection","Monitoring Inspection Non-Routine"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["Compliance Inspection of Open Violations","Initial Annual Inspection","Lead Based Paint or Lead in Water Inspection","Monitoring Inspection Non-Routine"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"inspection categories","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-486.7,10220.7],"tickmode":"array","ticktext":["0","2500","5000","7500","10000"],"tickvals":[5.6843418860808e-14,2500,5000,7500,10000],"categoryorder":"array","categoryarray":["0","2500","5000","7500","10000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"number of violations","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":10.6268161062682},"title":{"text":"borough","font":{"color":"rgba(0,0,0,1)","family":"","size":11.9551681195517}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1610165b5a739":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"1610165b5a739","visdat":{"1610165b5a739":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>### General Type vs Borough
+inspec_general_borough_sumary&lt;-
+borough_inspec_summmary%&gt;%
+group_by(general_category,borough)%&gt;%
+summarise(
+n_obs=sum(n_obs)
+) %&gt;% 
+  arrange(desc(n_obs)) 
+inspec_general_borough_sumary</code></pre>
+<pre><code>## # A tibble: 19 × 3
+## # Groups:   general_category [4]
+##    general_category                             borough       n_obs
+##    &lt;chr&gt;                                        &lt;chr&gt;         &lt;int&gt;
+##  1 Initial Annual Inspection                    QUEENS         3208
+##  2 Initial Annual Inspection                    BROOKLYN       2852
+##  3 Initial Annual Inspection                    MANHATTAN      1687
+##  4 Initial Annual Inspection                    BRONX          1586
+##  5 Compliance Inspection of Open Violations     BRONX           521
+##  6 Monitoring Inspection Non-Routine            MANHATTAN       468
+##  7 Compliance Inspection of Open Violations     BROOKLYN        457
+##  8 Initial Annual Inspection                    STATEN ISLAND   401
+##  9 Compliance Inspection of Open Violations     QUEENS          390
+## 10 Monitoring Inspection Non-Routine            BROOKLYN        301
+## 11 Monitoring Inspection Non-Routine            BRONX           284
+## 12 Monitoring Inspection Non-Routine            QUEENS          249
+## 13 Monitoring Inspection Non-Routine            STATEN ISLAND   141
+## 14 Compliance Inspection of Open Violations     MANHATTAN        68
+## 15 Compliance Inspection of Open Violations     STATEN ISLAND    32
+## 16 Lead Based Paint or Lead in Water Inspection BRONX            10
+## 17 Lead Based Paint or Lead in Water Inspection BROOKLYN         10
+## 18 Lead Based Paint or Lead in Water Inspection MANHATTAN         6
+## 19 Lead Based Paint or Lead in Water Inspection QUEENS            5</code></pre>
+<p>The following chart can better understand the violation situation of
+different Boroughs in New York. We can see that queens has the most
+violation records, Brooklyn has less violation records than queens but
+still far more than bronx and Manhattan, and staten island has the least
+violation records.</p>
+<pre class="r"><code>violation_borough_sumary_all&lt;-
+inspec_general_borough_sumary%&gt;%
+ggplot(aes(x=borough,y=n_obs))+
+geom_bar(aes(fill=general_category),stat = &quot;identity&quot;)+
+theme(axis.text.x = element_text(size=10, angle=45, hjust = 1))+
+  labs(y=&quot;number of violations&quot;,title=&quot;Borough vs.Inspection categories&quot;,x=&quot;borough&quot;)
+  
+ggplotly(violation_borough_sumary_all)</code></pre>
+<div id="htmlwidget-33f54ec82338639043a9" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-33f54ec82338639043a9">{"x":{"data":[{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[1880,3163,3462,2161,542],"x":[1,2,4,3,5],"y":[521,457,390,68,32],"text":["borough: BRONX<br />n_obs:  521<br />general_category: Compliance Inspection of Open Violations","borough: BROOKLYN<br />n_obs:  457<br />general_category: Compliance Inspection of Open Violations","borough: QUEENS<br />n_obs:  390<br />general_category: Compliance Inspection of Open Violations","borough: MANHATTAN<br />n_obs:   68<br />general_category: Compliance Inspection of Open Violations","borough: STATEN ISLAND<br />n_obs:   32<br />general_category: Compliance Inspection of Open Violations"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(68,1,84,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Compliance Inspection of Open Violations","legendgroup":"Compliance Inspection of Open Violations","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[254,311,474,294,141],"x":[4,2,3,1,5],"y":[3208,2852,1687,1586,401],"text":["borough: QUEENS<br />n_obs: 3208<br />general_category: Initial Annual Inspection","borough: BROOKLYN<br />n_obs: 2852<br />general_category: Initial Annual Inspection","borough: MANHATTAN<br />n_obs: 1687<br />general_category: Initial Annual Inspection","borough: BRONX<br />n_obs: 1586<br />general_category: Initial Annual Inspection","borough: STATEN ISLAND<br />n_obs:  401<br />general_category: Initial Annual Inspection"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(49,104,142,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Initial Annual Inspection","legendgroup":"Initial Annual Inspection","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[284,301,468,249],"x":[1,2,3,4],"y":[10,10,6,5],"text":["borough: BRONX<br />n_obs:   10<br />general_category: Lead Based Paint or Lead in Water Inspection","borough: BROOKLYN<br />n_obs:   10<br />general_category: Lead Based Paint or Lead in Water Inspection","borough: MANHATTAN<br />n_obs:    6<br />general_category: Lead Based Paint or Lead in Water Inspection","borough: QUEENS<br />n_obs:    5<br />general_category: Lead Based Paint or Lead in Water Inspection"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(53,183,121,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Lead Based Paint or Lead in Water Inspection","legendgroup":"Lead Based Paint or Lead in Water Inspection","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[0,0,0,0,0],"x":[3,2,1,4,5],"y":[468,301,284,249,141],"text":["borough: MANHATTAN<br />n_obs:  468<br />general_category: Monitoring Inspection Non-Routine","borough: BROOKLYN<br />n_obs:  301<br />general_category: Monitoring Inspection Non-Routine","borough: BRONX<br />n_obs:  284<br />general_category: Monitoring Inspection Non-Routine","borough: QUEENS<br />n_obs:  249<br />general_category: Monitoring Inspection Non-Routine","borough: STATEN ISLAND<br />n_obs:  141<br />general_category: Monitoring Inspection Non-Routine"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(253,231,37,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Monitoring Inspection Non-Routine","legendgroup":"Monitoring Inspection Non-Routine","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.7625570776256,"r":7.30593607305936,"b":74.384604277993,"l":48.9497716894977},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"Borough vs.Inspection categories","font":{"color":"rgba(0,0,0,1)","family":"","size":17.5342465753425},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,5.6],"tickmode":"array","ticktext":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":13.2835201328352},"tickangle":-45,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"borough","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-192.6,4044.6],"tickmode":"array","ticktext":["0","1000","2000","3000","4000"],"tickvals":[0,1000,2000,3000,4000],"categoryorder":"array","categoryarray":["0","1000","2000","3000","4000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.65296803652968,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"number of violations","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":10.6268161062682},"title":{"text":"general_category","font":{"color":"rgba(0,0,0,1)","family":"","size":11.9551681195517}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"161015ce1ac23":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"161015ce1ac23","visdat":{"161015ce1ac23":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>### Borough vs Violation Category
+Childcare_center %&gt;% 
+  mutate(violation_category = ifelse(is.na(violation_category), &quot;NO VIOLATION&quot;, violation_category)) %&gt;% 
+  group_by(borough, age_range) %&gt;% 
+  count(violation_category) %&gt;% 
+  ggplot(aes(fill =violation_category, x=borough,y = n))+
+  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)</code></pre>
+<p><img src="final_report_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>The graph above showing the relationship between the borough and the
+cases of violation in each category. From the grpah we can see, queens
+is the borough whihc has the most violation cases in all three
+categories and staten island has the least violation cases in all three
+categories. And in Brooklyn, it has the highest no violation cases.</p>
+<pre class="r"><code># try
+try = Childcare_center %&gt;% 
+  mutate(violation_category = ifelse(is.na(violation_category), &quot;NO VIOLATION&quot;, violation_category)) %&gt;%
+  select(borough,program_type,violation_category)%&gt;%
+  filter(program_type!=&quot;CAMP&quot;)%&gt;%
+  group_by(borough, program_type,violation_category) %&gt;% 
+  summarise(
+    n_obs=n())%&gt;%
+  ggplot(aes(x = borough, y = n_obs, fill = violation_category))+
+  geom_bar(stat=&quot;identity&quot;, width = 0.5, position = &quot;dodge&quot;)+
+  facet_grid(. ~ program_type) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 28),axis.text = element_text(size = 5))
+ggplotly(try) </code></pre>
+<div id="htmlwidget-e5f2ea950773e9fc91ac" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e5f2ea950773e9fc91ac">{"x":{"data":[{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[0.8125,1.8125,2.8125,3.8125,4.8125],"y":[154,159,51,102,6],"text":["borough: BRONX<br />n_obs:  154<br />violation_category: CRITICAL","borough: BROOKLYN<br />n_obs:  159<br />violation_category: CRITICAL","borough: MANHATTAN<br />n_obs:   51<br />violation_category: CRITICAL","borough: QUEENS<br />n_obs:  102<br />violation_category: CRITICAL","borough: STATEN ISLAND<br />n_obs:    6<br />violation_category: CRITICAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(68,1,84,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CRITICAL","legendgroup":"CRITICAL","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[0.8125,1.8125,2.8125,3.8125,4.8125],"y":[727,474,250,976,43],"text":["borough: BRONX<br />n_obs:  727<br />violation_category: CRITICAL","borough: BROOKLYN<br />n_obs:  474<br />violation_category: CRITICAL","borough: MANHATTAN<br />n_obs:  250<br />violation_category: CRITICAL","borough: QUEENS<br />n_obs:  976<br />violation_category: CRITICAL","borough: STATEN ISLAND<br />n_obs:   43<br />violation_category: CRITICAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(68,1,84,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"CRITICAL","legendgroup":"CRITICAL","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[0.9375,1.9375,2.9375,3.9375,4.9375],"y":[96,152,120,121,19],"text":["borough: BRONX<br />n_obs:   96<br />violation_category: GENERAL","borough: BROOKLYN<br />n_obs:  152<br />violation_category: GENERAL","borough: MANHATTAN<br />n_obs:  120<br />violation_category: GENERAL","borough: QUEENS<br />n_obs:  121<br />violation_category: GENERAL","borough: STATEN ISLAND<br />n_obs:   19<br />violation_category: GENERAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(49,104,142,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"GENERAL","legendgroup":"GENERAL","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[0.9375,1.9375,2.9375,3.9375,4.9375],"y":[825,548,473,1315,91],"text":["borough: BRONX<br />n_obs:  825<br />violation_category: GENERAL","borough: BROOKLYN<br />n_obs:  548<br />violation_category: GENERAL","borough: MANHATTAN<br />n_obs:  473<br />violation_category: GENERAL","borough: QUEENS<br />n_obs: 1315<br />violation_category: GENERAL","borough: STATEN ISLAND<br />n_obs:   91<br />violation_category: GENERAL"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(49,104,142,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"GENERAL","legendgroup":"GENERAL","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[1.0625,2.0625,3.0625,4.0625,5.0625],"y":[187,533,346,287,79],"text":["borough: BRONX<br />n_obs:  187<br />violation_category: NO VIOLATION","borough: BROOKLYN<br />n_obs:  533<br />violation_category: NO VIOLATION","borough: MANHATTAN<br />n_obs:  346<br />violation_category: NO VIOLATION","borough: QUEENS<br />n_obs:  287<br />violation_category: NO VIOLATION","borough: STATEN ISLAND<br />n_obs:   79<br />violation_category: NO VIOLATION"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(53,183,121,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"NO VIOLATION","legendgroup":"NO VIOLATION","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[1.0625,2.0625,3.0625,4.0625,5.0625],"y":[735,1835,967,1480,328],"text":["borough: BRONX<br />n_obs:  735<br />violation_category: NO VIOLATION","borough: BROOKLYN<br />n_obs: 1835<br />violation_category: NO VIOLATION","borough: MANHATTAN<br />n_obs:  967<br />violation_category: NO VIOLATION","borough: QUEENS<br />n_obs: 1480<br />violation_category: NO VIOLATION","borough: STATEN ISLAND<br />n_obs:  328<br />violation_category: NO VIOLATION"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(53,183,121,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"NO VIOLATION","legendgroup":"NO VIOLATION","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[1.1875,2.1875,3.1875,4.1875,5.1875],"y":[57,70,19,38,4],"text":["borough: BRONX<br />n_obs:   57<br />violation_category: PUBLIC HEALTH HAZARD","borough: BROOKLYN<br />n_obs:   70<br />violation_category: PUBLIC HEALTH HAZARD","borough: MANHATTAN<br />n_obs:   19<br />violation_category: PUBLIC HEALTH HAZARD","borough: QUEENS<br />n_obs:   38<br />violation_category: PUBLIC HEALTH HAZARD","borough: STATEN ISLAND<br />n_obs:    4<br />violation_category: PUBLIC HEALTH HAZARD"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(253,231,37,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"PUBLIC HEALTH HAZARD","legendgroup":"PUBLIC HEALTH HAZARD","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.125,0.125,0.125,0.125,0.125],"base":[0,0,0,0,0],"x":[1.1875,2.1875,3.1875,4.1875,5.1875],"y":[169,196,89,218,9],"text":["borough: BRONX<br />n_obs:  169<br />violation_category: PUBLIC HEALTH HAZARD","borough: BROOKLYN<br />n_obs:  196<br />violation_category: PUBLIC HEALTH HAZARD","borough: MANHATTAN<br />n_obs:   89<br />violation_category: PUBLIC HEALTH HAZARD","borough: QUEENS<br />n_obs:  218<br />violation_category: PUBLIC HEALTH HAZARD","borough: STATEN ISLAND<br />n_obs:    9<br />violation_category: PUBLIC HEALTH HAZARD"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(253,231,37,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"PUBLIC HEALTH HAZARD","legendgroup":"PUBLIC HEALTH HAZARD","showlegend":false,"xaxis":"x2","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":37.9178082191781,"r":18.9954337899543,"b":57.9115106073177,"l":38.854296388543},"plot_bgcolor":"rgba(255,255,255,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,0.489128071319852],"automargin":true,"type":"linear","autorange":false,"range":[0.4,5.6],"tickmode":"array","ticktext":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":6.6417600664176},"tickangle":-28,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"","hoverformat":".2f"},"annotations":[{"text":"borough","x":0.5,"y":0,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"top","annotationType":"axis","yshift":-39.6466704246693},{"text":"n_obs","x":0,"y":0.5,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-90,"xanchor":"right","yanchor":"center","annotationType":"axis","xshift":-23.5118306351183},{"text":"INFANT TODDLER","x":0.244564035659926,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(26,26,26,1)","family":"","size":11.689497716895},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"bottom"},{"text":"PRESCHOOL","x":0.755435964340074,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(26,26,26,1)","family":"","size":11.689497716895},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"center","yanchor":"bottom"}],"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-91.75,1926.75],"tickmode":"array","ticktext":["0","500","1000","1500"],"tickvals":[0,500,1000,1500],"categoryorder":"array","categoryarray":["0","500","1000","1500"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":6.6417600664176},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":"","hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":0.489128071319852,"y0":0,"y1":1},{"type":"rect","fillcolor":"rgba(217,217,217,1)","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0,"x1":0.489128071319852,"y0":0,"y1":23.37899543379,"yanchor":1,"ysizemode":"pixel"},{"type":"rect","fillcolor":"transparent","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0.510871928680148,"x1":1,"y0":0,"y1":1},{"type":"rect","fillcolor":"rgba(217,217,217,1)","line":{"color":"rgba(51,51,51,1)","width":0.66417600664176,"linetype":"solid"},"yref":"paper","xref":"paper","x0":0.510871928680148,"x1":1,"y0":0,"y1":23.37899543379,"yanchor":1,"ysizemode":"pixel"}],"xaxis2":{"type":"linear","autorange":false,"range":[0.4,5.6],"tickmode":"array","ticktext":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["BRONX","BROOKLYN","MANHATTAN","QUEENS","STATEN ISLAND"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":6.6417600664176},"tickangle":-28,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"domain":[0.510871928680148,1],"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":"","hoverformat":".2f"},"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"title":{"text":"violation_category","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"161016cd565c5":{"x":{},"y":{},"fill":{},"type":"bar"}},"cur_data":"161016cd565c5","visdat":{"161016cd565c5":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>The graph above is showing the relationship between borough and the
+number of violation category count in two different program types. The
+borough can separate the five parts “Bronx”, “Brooklyn”, “Manhattan”,
+“Staten Island” and “Queens”. Violation category can be separate
+“Critical”, “General”, “No Violation” and “Public Helath Hazard”.
+Combining two graphs, pre school will have a higher violation cases in
+each borough in overall. In infant toddler, Brooklyn is the borough that
+having the largest violation cases.But in preschool, queens is the
+borough that having the largest cases. Staten island has the smallest
+cases in both preschool and infant toddler. Footer</p>
+</div>
+<div id="additional-analysis" class="section level1">
+<h1>Additional Analysis</h1>
+<p>Chi-squared test and ANOVA are conducted to examine significance of
+variable borough and program types for predicting violation
+occurrence.</p>
+<div id="chi-square-test---borough-vs-violation-category"
+class="section level3">
+<h3>Chi-Square test - Borough vs Violation Category</h3>
+<p>program type and violation category to test the association between
+the two variables.</p>
+<p><strong>H0:There is no association between program type and violation
+category</strong></p>
+<p><strong>H1:There is association between program type and violation
+category</strong></p>
+<pre class="r"><code>tbl1=table(Childcare_center$borough,Childcare_center$violation_category)
+chisq.test(tbl1)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test
+## 
+## data:  tbl1
+## X-squared = 999.29, df = 12, p-value &lt; 2.2e-16</code></pre>
+<pre class="r"><code>chisq.test(tbl1)%&gt;% 
+  broom::tidy() %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">parameter</th>
+<th align="left">method</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">999.2946</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="left">Pearson’s Chi-squared test</td>
+</tr>
+</tbody>
+</table>
+<p>There is significant relationship between program type and violation
+category suggested by the computed p-value much lower than 0.05</p>
+</div>
+<div id="chi-square-test---program-types-vs-violation-category"
+class="section level3">
+<h3>Chi-Square test - Program Types vs Violation Category</h3>
+<p>We conducted a chi-squared test between childcare type and violation
+category to test the association between the two variables.</p>
+<p><strong>H0:There is no association between childcare type and
+violation category</strong></p>
+<p><strong>H1:There is association between childcare type and violation
+category</strong></p>
+<pre class="r"><code>tbl2=table(Childcare_center$child_care_type,Childcare_center$violation_category)
+chisq.test(tbl2)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test
+## 
+## data:  tbl2
+## X-squared = 111.01, df = 3, p-value &lt; 2.2e-16</code></pre>
+<pre class="r"><code>chisq.test(tbl2) %&gt;% 
+  broom::tidy() %&gt;% 
+  knitr::kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+<th align="right">parameter</th>
+<th align="left">method</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">111.0138</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="left">Pearson’s Chi-squared test</td>
+</tr>
+</tbody>
+</table>
+<p>There is significant relationship between childcare type and
+violation category suggested by the computed p-value much lower than
+0.05</p>
+</div>
+<div id="anova-test---borough-and-violation" class="section level3">
+<h3>ANOVA Test - Borough and Violation</h3>
+<p>We want to examining the relationship between the mean of total
+violation event (GENERAL+CRITICAL+PUBLIC HEALTH HAZARD) and borough. The
+frequency of violation events were separated by five boroughs
+(Manhattan, Brooklyn, Queens, Staten Island, Bronx).</p>
+<p><strong>H0: The mean of violation are not different across
+borough</strong></p>
+<p><strong>H1: The mean of violation are different across
+borough</strong></p>
+<pre class="r"><code>clean_1 = children_center&lt;-
+  raw_data%&gt;%
+  janitor::clean_names()%&gt;%
+  mutate(
+    center_name=tolower(center_name),
+    center_name=gsub(&#39;[[:punct:] ]+&#39;,&#39; &#39;,center_name),
+    center_name=gsub(&quot; &quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;llc&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;inc&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;th&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;school&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;center&quot;,&quot;&quot;,center_name),
+    center_name=gsub(&quot;ctr&quot;,&quot;&quot;,center_name)
+  )%&gt;%
+  filter(status==&quot;Permitted&quot;) %&gt;% 
+  mutate(borough = as.factor(borough), program_type = as.factor(program_type)) %&gt;%
+   filter(violation_category != &quot;NO VIOLATION&quot;) %&gt;% 
+  mutate(violation_category = &quot;VIOLATION&quot;) %&gt;% 
+  group_by(center_name,borough) %&gt;% 
+  count() 
+fit = lm(n~ borough, data = clean_1)
+anova(fit) %&gt;% 
+  knitr::kable(caption = &quot;One way anova of Violation frequency and Brough&quot;)</code></pre>
+<table>
+<caption>One way anova of Violation frequency and Brough</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Df</th>
+<th align="right">Sum Sq</th>
+<th align="right">Mean Sq</th>
+<th align="right">F value</th>
+<th align="right">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">borough</td>
+<td align="right">4</td>
+<td align="right">15688.56</td>
+<td align="right">3922.141</td>
+<td align="right">25.89965</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Residuals</td>
+<td align="right">985</td>
+<td align="right">149164.49</td>
+<td align="right">151.436</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+<p>The p-value is very small(p&lt;0.05). We reject the null hypothesis
+and saying that there is enough evidence the mean of violation are
+<strong>different across borough</strong>.</p>
+<p>After validating the significance of age range and program type, we
+constructed a logistics regression model for predicting violation
+occurrence.</p>
+</div>
+<div id="logistic-regression" class="section level3">
+<h3>Logistic Regression</h3>
+<p>To predict whether a childcare facility will violate or not, we fit
+the data to a logistic regression model.</p>
+<p>Our model is shown below:</p>
+<pre class="r"><code># New dataset for modelling
+childcare_model &lt;- Childcare_center %&gt;% 
+  mutate(violation_category = ifelse(violation_category == &quot;NO VIOLATION&quot;, 0, 1),
+         borough = as.factor(borough)) %&gt;% # 0 is no liolation, 1 is with violation
+  select(borough,child_care_type,total_educational_workers,maximum_capacity, violation_category)
+# fit logistic reg
+logistic_model = childcare_model %&gt;% 
+  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) %&gt;% 
+  broom::tidy() %&gt;% 
+  knitr::kable(caption = &quot;Effect of Predictors on Violation Status&quot;)
+logistic_model</code></pre>
+<table style="width:100%;">
+<caption>Effect of Predictors on Violation Status</caption>
+<colgroup>
+<col width="48%" />
+<col width="13%" />
+<col width="12%" />
+<col width="13%" />
+<col width="12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">0.4692795</td>
+<td align="right">0.0559961</td>
+<td align="right">8.380571</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">boroughBROOKLYN</td>
+<td align="right">-1.1458556</td>
+<td align="right">0.0514892</td>
+<td align="right">-22.254278</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughMANHATTAN</td>
+<td align="right">-1.0180213</td>
+<td align="right">0.0580792</td>
+<td align="right">-17.528165</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">boroughQUEENS</td>
+<td align="right">-0.3377869</td>
+<td align="right">0.0502914</td>
+<td align="right">-6.716594</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="odd">
+<td align="left">boroughSTATEN ISLAND</td>
+<td align="right">-1.6359735</td>
+<td align="right">0.0995010</td>
+<td align="right">-16.441776</td>
+<td align="right">0.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">child_care_typeChild Care - Pre School</td>
+<td align="right">0.1660567</td>
+<td align="right">0.0488473</td>
+<td align="right">3.399506</td>
+<td align="right">0.0006751</td>
+</tr>
+<tr class="odd">
+<td align="left">maximum_capacity</td>
+<td align="right">0.0023471</td>
+<td align="right">0.0003790</td>
+<td align="right">6.192338</td>
+<td align="right">0.0000000</td>
+</tr>
+</tbody>
+</table>
+<p>As we can see in the summary, all predictors are significant with p
+value &lt; 0.01, suggesting association with violation status. Different
+borough has different coefficients, suggesting regional difference in
+violation status. The odds of violation for childcare center in Bronx is
+0.469, holding all other variables constant.For each of the other
+borough, the coefficient tells us that the log-odds of violation for a
+given group is smaller than that of the reference group.</p>
+<p>We also used a simple method to test our model accuracy.Firstly, I
+split our dataset to training and testing dataset, and then fit the
+model using the training data, and test for accuracy using testing data.
+Lastly, I used confusion matrix to access our logistic model.</p>
+<pre class="r"><code>library(rsample)   # for data splitting
+# Modeling packages
+library(caret)     # for logistic regression modeling
+# Model interpretability packages
+library(vip)       # variable importance
+childcare_split &lt;- initial_split(childcare_model, prop = .7)
+childcare_train &lt;- training(childcare_split)
+childcare_test  &lt;- testing(childcare_split)
+set.seed(123)
+# predict violation using model
+# fit logistic reg
+logistic_model_train = childcare_train %&gt;% 
+  glm(violation_category ~ borough + child_care_type + maximum_capacity, data = ., family = binomial()) 
+logistics_predict = predict(logistic_model_train, childcare_test, type = &#39;response&#39;)
+
+# convert predicted value to TRUE/FALSE
+childcare_test$predict_violation = ifelse(logistics_predict &gt;= .5, 1, 0)
+# Used confusion matrix to measure model performance
+confusion_data = childcare_test %&gt;% 
+  select(predict_violation, violation_category) %&gt;% 
+  mutate(predict_violation = as.factor(predict_violation), 
+         violation_category = as.factor(violation_category))
+
+confusionMatrix(data=confusion_data$predict_violation, reference = confusion_data$violation_category) %&gt;% 
+  broom::tidy() %&gt;% 
+  select(term, estimate) %&gt;% 
+  filter(term %in% c(&quot;accuracy&quot;, &quot;kappa&quot;, &quot;sensitivity&quot;, &quot;specificity&quot;, &quot;f1&quot;)) %&gt;% 
+  knitr::kable(caption = &quot;Measuring Model Performance &quot;)</code></pre>
+<table>
+<caption>Measuring Model Performance</caption>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">accuracy</td>
+<td align="right">0.6236934</td>
+</tr>
+<tr class="even">
+<td align="left">kappa</td>
+<td align="right">0.2458492</td>
+</tr>
+<tr class="odd">
+<td align="left">sensitivity</td>
+<td align="right">0.6009662</td>
+</tr>
+<tr class="even">
+<td align="left">specificity</td>
+<td align="right">0.6447427</td>
+</tr>
+<tr class="odd">
+<td align="left">f1</td>
+<td align="right">0.6056475</td>
+</tr>
+</tbody>
+</table>
+<p>It turns out that our model has accuracy rate of 62%, with Kappa
+coefficient at around 0.24. This means that the predictability of our
+model is relatively week. But the significance of our predictors
+indicating that borough, childcare types and maximum capacity are all
+associated with violation. The reason behind regional disparities in
+violation should be investigated in the future.</p>
+<p>The main reason for our weak predictability is that we lack of
+essential predictors for the model. Combined with the top 10 violation
+summary we analyzed before, useful information may include: hours of
+training, celling and floor maintance frequecny, stuff medical clearance
+status, etc.</p>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>Although relatively weak predictability is observed for this logistic
+regression model with accuracy rate of 62% and Kappa coefficient at
+around 0.24, it is suggested that borough, childcare type and maximum
+capacity are all connected with violation and could potentially be
+estimators of violation occurrence. Aiming at constructing a more
+accurate model, more related variables should be taken into
+consideration to refine violation prediction.</p>
+</div>
 
 
 
