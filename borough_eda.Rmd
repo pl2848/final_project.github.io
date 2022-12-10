@@ -110,10 +110,9 @@ Childcare_center %>%
 
 The graph above showing the relationship between the borough and the cases of violation in each category. From the grpah we can see, queens is the borough whihc has the most violation cases in all three categories and staten island has the least violation cases in all three categories. And in Brooklyn, it has the highest no violation cases. 
 
-```{r, warning=FALSE, message=FALSE }
+```{r, warning=FALSE, message=FALSE}
 # try
 try = Childcare_center %>% 
-  mutate(violation_category = ifelse(is.na(violation_category), "NO VIOLATION", violation_category)) %>%
   select(borough,program_type,violation_category)%>%
   filter(program_type!="CAMP")%>%
   group_by(borough, program_type,violation_category) %>% 
@@ -123,8 +122,8 @@ try = Childcare_center %>%
   geom_bar(stat="identity", width = 0.5, position = "dodge")+
   facet_grid(. ~ program_type) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 28),axis.text = element_text(size = 5))
+  theme(axis.text.x = element_text(angle = 28),axis.text = element_text(size = 5))+ labs(title = "Borough vs Violation Categrory in differnt Program Types",y = "Total Violation Cases", x = "Borough")
 
 ggplotly(try) 
 ```
-The graph above is showing the relationship between borough and the number of violation category count in two different program types. The borough can separate the five parts "Bronx", "Brooklyn", "Manhattan", "Staten Island" and "Queens". Violation category can be separate "Critical", "General", "No Violation" and "Public Helath Hazard". Combining two graphs, pre school will have a higher violation cases in each borough in overall. In infant toddler, Brooklyn is the borough that having the largest violation cases.But in preschool, queens is the borough that having the largest cases. Staten island has the smallest cases in both preschool and infant toddler.
+The graph above is showing the relationship between borough and the number of violation category count in two different program types. The borough can separate the five parts “Bronx”, “Brooklyn”, “Manhattan”, “Staten Island” and “Queens”. Violation category can be separate “Critical”, “General”, “No Violation” and “Public Health Hazard”. Combining two graphs, preschool will have a higher violation case in each borough in overall. In infant toddler, Brooklyn is the borough that having the largest violation cases. But in preschool, queens is the borough that having the largest cases. Staten island has the smallest cases in both preschool and infant toddler. 
