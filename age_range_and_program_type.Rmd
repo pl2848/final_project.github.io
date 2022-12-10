@@ -1,39 +1,28 @@
 ---
-title: "Age Range and Program Type"
+title: "age_range & program_type"
 output: html_document
+date: "2022-11-28"
 ---
 
-```{r setup, include=FALSE}
+```{r}
 library(tidyverse)
 library(patchwork)
 library(plotly)
 library(haven)
-library(viridis)
-options(
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis"
-)
-theme_set(theme_minimal() + theme(legend.position = "bottom",
-                                  legend.text = element_text(size = 8),
-                                  legend.title = element_text(size = 9),
-                                  legend.key.size = unit(.5,"line")))
-options(
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis"
-)
-scale_colour_discrete = scale_colour_viridis_d
-scale_fill_discrete = scale_fill_viridis_d
+library(dplyr)
 ```
 
-```{r, include = FALSE}
-raw_data = read_csv(file="./data/DOHMH_Childcare_Center_Inspections .csv")
+```{r}
+library(readr)
+raw_data <- read_csv("./data/DOHMH_Childcare_Center_Inspections .csv")
 ```
 
-```{r, include = FALSE}
+Data Cleaning
+```{r}
 Childcare_center = raw_data%>%
   janitor::clean_names() %>%
   filter(status=="Permitted")%>%
-  select(-legal_name,-building,-street,-phone,-permit_number,-permit_expiration,
+  select(-center_name,-building,-street,-phone,-permit_number,-permit_expiration,
          -day_care_id,-url,-date_permitted,-actual)%>%
   drop_na(violation_rate_percent,public_health_hazard_violation_rate, critical_violation_rate, violation_status, age_range) %>% 
   filter(age_range != "0 YEARS - 16 YEARS", program_type !="CAMP") %>% 
@@ -43,34 +32,56 @@ Childcare_center
 ```
 
 
-```{r, include = FALSE}
+```{r}
 Childcare_center %>% 
   select(age_range, violation_category) %>% 
   filter(age_range == "2 YEARS - 5 YEARS") 
 ```
 
-### Age Range vs Violation Category
 ```{r}
 Childcare_center %>% 
   group_by(age_range) %>% 
   count(violation_category) %>% 
   ggplot(aes(fill =violation_category, x=age_range,y = n))+
-  geom_bar(position = "dodge", stat = "identity")
+  geom_bar(position = "dodge", stat = "identity")+ labs(title = "Age Range vs. Violation Categrory",y = "Total Violation Cases", x = "Age_Range") 
 ```
-
-
-- Age range is the same as the program type violation.(graph below)
-
-### Program Type vs Violation Category
-
-
+# The graph showed the relationship between two different group of age range (0 YEARS-2YEARS) and the violation cases in three categories (“critical”, “general” and “public health hazard”) number. As we can see from the graph, 2-5YEARS has a higher violation case and no violation than the 0-2YEARS. 
 ```{r}
 Childcare_center %>% 
   group_by(program_type) %>% 
   count(violation_category) %>% 
   ggplot(aes(fill =violation_category, x=program_type,y = n))+
-  geom_bar(position = "dodge", stat = "identity")
+  geom_bar(position = "dodge", stat = "identity")+ labs(title = "Program Type vs. Violation Categrory",y = "Total Violation Cases", x = "Program Type") 
 ```
 
-After analysing the data we found that the age-range and program type relationship is the same. Infant school is for 0-2 years kids and preschool is for 0-5 years kids. The graph above showing the relationship between the program type (Preschool&Infant Toddler) and the violation category cases(Critial, General, No Violation and Public Health Hazrd). As we can see from the graph, preschool has a higher violation cases in the categoy "public health hazard", "general" and "critical" than the Infant todddler program type. And in three violation categories, the "general" cases is higher then the other two. 
+# After analyzing the data, we found that the age-range and program type relationship is the same. Infant school is for 0-2 years kids and preschool are for 0-5 years kids. The graph above showing the relationship between the program type (Preschool Infant Toddler) and the violation category cases (Critical, General, No Violation and Public Health Hazard). As we can see from the graph, preschool has a higher violation case in the category “public health hazard”, “general” and “critical” than the Infant toddler program type. And in three violation categories, the “general” cases are higher than the other two.
+
+```{r}
+Childcare_center %>% 
+  group_by(borough, age_range) %>% 
+  count(violation_category) %>% 
+  ggplot(aes(fill =violation_category, x = borough,y = n)) +
+  geom_bar(position = "dodge", stat = "identity")+ labs(title = "Borough vs. Violation Categrory",y = "Total Violation Cases", x = "Borough") 
+```
+# The graph above showing the relationship between the borough and the cases of violation in each category. From the graph we can see, Queens is the borough which has the most violation cases in all three categories and Staten Island has the least violation cases in all three categories. And in Brooklyn, it has the highest no violation cases
+
+
+```{r}
+# try
+try = Childcare_center %>% 
+  select(borough,program_type,violation_category)%>%
+  filter(program_type!="CAMP")%>%
+  group_by(borough, program_type,violation_category) %>% 
+  summarise(
+    n_obs=n())%>%
+  ggplot(aes(x = borough, y = n_obs, fill = violation_category))+
+  geom_bar(stat="identity", width = 0.5, position = "dodge")+
+  facet_grid(. ~ program_type) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 28),axis.text = element_text(size = 5))+ labs(title = "Borough vs Violation Categrory in differnt Program Types",y = "Total Violation Cases", x = "Borough")
+
+ggplotly(try) 
+```
+# The graph above is showing the relationship between borough and the number of violation category count in two different program types. The borough can separate the five parts “Bronx”, “Brooklyn”, “Manhattan”, “Staten Island” and “Queens”. Violation category can be separate “Critical”, “General”, “No Violation” and “Public Health Hazard”. Combining two graphs, preschool will have a higher violation case in each borough in overall. In infant toddler, Brooklyn is the borough that having the largest violation cases. But in preschool, queens is the borough that having the largest cases. Staten island has the smallest cases in both preschool and infant toddler. 
+
 
