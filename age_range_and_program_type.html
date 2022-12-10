@@ -427,17 +427,6 @@ Health Hazard). As we can see from the graph, preschool has a higher
 violation case in the category “public health hazard”, “general” and
 “critical” than the Infant toddler program type. And in three violation
 categories, the “general” cases are higher than the other two.</p>
-<pre class="r"><code>Childcare_center %&gt;% 
-  group_by(borough, age_range) %&gt;% 
-  count(violation_category) %&gt;% 
-  ggplot(aes(fill =violation_category, x = borough,y = n)) +
-  geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)+ labs(title = &quot;Borough vs. Violation Categrory&quot;,y = &quot;Total Violation Cases&quot;, x = &quot;Borough&quot;) </code></pre>
-<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>The graph above showing the relationship between the borough and the
-cases of violation in each category. From the graph we can see, Queens
-is the borough which has the most violation cases in all three
-categories and Staten Island has the least violation cases in all three
-categories. And in Brooklyn, it has the highest no violation cases</p>
 </div>
 
 

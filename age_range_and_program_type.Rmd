@@ -78,16 +78,7 @@ Childcare_center %>%
 
 After analyzing the data, we found that the age-range and program type relationship is the same. Infant school is for 0-2 years kids and preschool are for 0-5 years kids. The graph above showing the relationship between the program type (Preschool Infant Toddler) and the violation category cases (Critical, General, No Violation and Public Health Hazard). As we can see from the graph, preschool has a higher violation case in the category “public health hazard”, “general” and “critical” than the Infant toddler program type. And in three violation categories, the “general” cases are higher than the other two.
 
-```{r, warning=FALSE, message=FALSE}
-Childcare_center %>% 
-  group_by(borough, age_range) %>% 
-  count(violation_category) %>% 
-  ggplot(aes(fill =violation_category, x = borough,y = n)) +
-  geom_bar(position = "dodge", stat = "identity")+ labs(title = "Borough vs. Violation Categrory",y = "Total Violation Cases", x = "Borough") 
-```
 
-
-The graph above showing the relationship between the borough and the cases of violation in each category. From the graph we can see, Queens is the borough which has the most violation cases in all three categories and Staten Island has the least violation cases in all three categories. And in Brooklyn, it has the highest no violation cases
 
 
 
