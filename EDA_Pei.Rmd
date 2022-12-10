@@ -57,6 +57,7 @@ plotly_capacity_type = Childcare_center %>%
 plotly_capacity_type
 ```
 
+
 ### The relationship between maximum capacity and violation category
 We then want to examine whether there is connection between maximum capacity and violation. Since the maximum capacity in different child care types are different, we display the distribution of maximum capacity vs violation category by child care type. 
 
@@ -151,6 +152,8 @@ boxplot_worker = Childcare_center %>%
 boxplot_worker
 
 ```
+
+
 ### The relationship between total educational worker, maximum capacity and child care type
 
 As we can see, there's no significant different within each child care type. But the educational workers per child is higher in Infants/Toddlers than it is in Pre school.

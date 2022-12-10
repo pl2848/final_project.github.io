@@ -4,7 +4,7 @@ output: html_document
 ---
 
 
-- Step1: input dataset DOHMH Childcare Center Inspections (Updated from november 25,2022) from NYC OpenData 
+- Step1: Input dataset DOHMH Childcare Center Inspections (Updated from november 25,2022) from NYC OpenData 
 ```{r  setup, include=FALSE}
 library(tidyverse)
 library(ggridges)
