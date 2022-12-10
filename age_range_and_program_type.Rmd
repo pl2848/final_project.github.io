@@ -1,5 +1,5 @@
 ---
-title: "age_range & program_type"
+title: "Age Range and Program Type vs Violation Category"
 output: html_document
 ---
 
@@ -9,6 +9,20 @@ library(patchwork)
 library(plotly)
 library(haven)
 library(dplyr)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+theme_set(theme_minimal() + theme(legend.position = "bottom",
+                                  legend.text = element_text(size = 8),
+                                  legend.title = element_text(size = 9),
+                                  legend.key.size = unit(.5,"line")))
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 ```
 
 ```{r, include = FALSE}
@@ -36,7 +50,10 @@ Childcare_center %>%
   select(age_range, violation_category) %>% 
   filter(age_range == "2 YEARS - 5 YEARS") 
 ```
-# Age Range vs Violation
+
+
+### Age Range vs Violation
+
 ```{r, warning=FALSE, message=FALSE}
 Childcare_center %>% 
   group_by(age_range) %>% 
@@ -44,9 +61,12 @@ Childcare_center %>%
   ggplot(aes(fill =violation_category, x=age_range,y = n))+
   geom_bar(position = "dodge", stat = "identity")+ labs(title = "Age Range vs. Violation Categrory",y = "Total Violation Cases", x = "Age_Range") 
 ```
+
+
 The graph showed the relationship between two different group of age range (0 YEARS-2YEARS) and the violation cases in three categories (“critical”, “general” and “public health hazard”) number. As we can see from the graph, 2-5YEARS has a higher violation case and no violation than the 0-2YEARS. 
 
-# Program Type vs Violation
+### Program Type vs Violation
+
 ```{r, warning=FALSE, message=FALSE}
 Childcare_center %>% 
   group_by(program_type) %>% 
@@ -54,6 +74,7 @@ Childcare_center %>%
   ggplot(aes(fill =violation_category, x=program_type,y = n))+
   geom_bar(position = "dodge", stat = "identity")+ labs(title = "Program Type vs. Violation Categrory",y = "Total Violation Cases", x = "Program Type") 
 ```
+
 
 After analyzing the data, we found that the age-range and program type relationship is the same. Infant school is for 0-2 years kids and preschool are for 0-5 years kids. The graph above showing the relationship between the program type (Preschool Infant Toddler) and the violation category cases (Critical, General, No Violation and Public Health Hazard). As we can see from the graph, preschool has a higher violation case in the category “public health hazard”, “general” and “critical” than the Infant toddler program type. And in three violation categories, the “general” cases are higher than the other two.
 
@@ -64,6 +85,8 @@ Childcare_center %>%
   ggplot(aes(fill =violation_category, x = borough,y = n)) +
   geom_bar(position = "dodge", stat = "identity")+ labs(title = "Borough vs. Violation Categrory",y = "Total Violation Cases", x = "Borough") 
 ```
+
+
 The graph above showing the relationship between the borough and the cases of violation in each category. From the graph we can see, Queens is the borough which has the most violation cases in all three categories and Staten Island has the least violation cases in all three categories. And in Brooklyn, it has the highest no violation cases
 
 

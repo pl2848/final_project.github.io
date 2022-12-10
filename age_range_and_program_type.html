@@ -11,7 +11,7 @@
 
 
 
-<title>age_range &amp; program_type</title>
+<title>Age Range and Program Type vs Violation Category</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -390,27 +390,28 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">age_range &amp; program_type</h1>
+<h1 class="title toc-ignore">Age Range and Program Type vs Violation
+Category</h1>
 
 </div>
 
 
-<div id="age-range-vs-violation" class="section level1">
-<h1>Age Range vs Violation</h1>
+<div id="age-range-vs-violation" class="section level3">
+<h3>Age Range vs Violation</h3>
 <pre class="r"><code>Childcare_center %&gt;% 
   group_by(age_range) %&gt;% 
   count(violation_category) %&gt;% 
   ggplot(aes(fill =violation_category, x=age_range,y = n))+
   geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)+ labs(title = &quot;Age Range vs. Violation Categrory&quot;,y = &quot;Total Violation Cases&quot;, x = &quot;Age_Range&quot;) </code></pre>
-<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-5-1.png" width="672" />
-The graph showed the relationship between two different group of age
+<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>The graph showed the relationship between two different group of age
 range (0 YEARS-2YEARS) and the violation cases in three categories
 (“critical”, “general” and “public health hazard”) number. As we can see
 from the graph, 2-5YEARS has a higher violation case and no violation
 than the 0-2YEARS.</p>
 </div>
-<div id="program-type-vs-violation" class="section level1">
-<h1>Program Type vs Violation</h1>
+<div id="program-type-vs-violation" class="section level3">
+<h3>Program Type vs Violation</h3>
 <pre class="r"><code>Childcare_center %&gt;% 
   group_by(program_type) %&gt;% 
   count(violation_category) %&gt;% 
@@ -431,8 +432,8 @@ categories, the “general” cases are higher than the other two.</p>
   count(violation_category) %&gt;% 
   ggplot(aes(fill =violation_category, x = borough,y = n)) +
   geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;)+ labs(title = &quot;Borough vs. Violation Categrory&quot;,y = &quot;Total Violation Cases&quot;, x = &quot;Borough&quot;) </code></pre>
-<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-7-1.png" width="672" />
-The graph above showing the relationship between the borough and the
+<p><img src="age_range_and_program_type_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The graph above showing the relationship between the borough and the
 cases of violation in each category. From the graph we can see, Queens
 is the borough which has the most violation cases in all three
 categories and Staten Island has the least violation cases in all three

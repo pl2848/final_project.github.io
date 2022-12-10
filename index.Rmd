@@ -1,5 +1,5 @@
 ---
-title: "P8105 Final Project"
+title: "New York Children Care Center Violation Project"
 output: 
   html_document:
     toc: true
@@ -7,9 +7,9 @@ output:
     theme: cosmo
 ---
 
-# Project Motivation:
+## Project Motivation:
 
-Nowadays, children care center become a worldwide popular topic by the working parents increasing. Most people choose to put their child to the children care center during their working time. In a high demand of request, choosing a safe and healthy children care environment is important.  However, some children care center still has the severe food safety and cooking environment problems which NYC government determine them as violation according to their severe level. In our research, we try to investigate the cafeteria violation in children care center in NYC using the NYC Open data set. 
+Nowadays, children care center become a worldwide popular topic due to increasing working parents . Most people choose to put their child to the children care center during their working time. In a high demand of request, choosing a safe and healthy children care environment is important. However, some children care center still has the severe  safety and hygiene issues which NYC government determine them as violation according to their severe level. In our research, we try to investigate the  violation in children care center in NYC using the NYC Open data set.
 
 <img src="./data/Introduction_pic.jpg" style="width:100%">
 *Image from NCY Health*
@@ -23,11 +23,11 @@ Finding an affordable and qualified children care center is necessary for New Yo
 <iframe width="560" height="315" src="https://www.youtube.com/embed/EJIkdVR_3Fk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 
-# Screencast
+## Screencast
 
 <iframe width="840" height="472.5" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-# Website Overview
+## Website Overview
 In the exploratory analyses section, you will find:
 
 * Overview of Violation Summary
