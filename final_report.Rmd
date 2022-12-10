@@ -14,6 +14,7 @@ output:
 Nowadays, children care center become a worldwide popular topic due to increasing working parents. Most working parents send their child to children care center during work time. In a high demand of request, selecting a safe and healthy children care environment is important.  However, some children care center still has severe safety and hygiene issues which NYC government classify them as violation according to their severity level. In this research, we are trying to investigate the violation in children care center in NYC based on the NYC Open data set for predicting occurrence of violation based on multiple socioeconomic variables. 
 
 
+For further illustrate connection between selected socioeconomic variables and violation occurrence, we construct a logistic regression model to analysis significance of each variable in predicting violation along with a map displaying violation occurrence based on zip code in New York city.
 
 # Related Work
 
@@ -30,7 +31,7 @@ A healthy growing environment has been one of the five factors parents care abou
 # Initial Questions
 
 
-Our initial question focuses on how socioeconomics factors are related to childcare violation in New York. We investigated multiple factors such as borough and childcare type to create a more lucid analysis of occurrence of childcare violation. Specifically, we evaluates borough with high occurrence of violation and childcare types for which most violation occurs. Further details related to the study will be presented in other parts of the websites. 
+Our initial question focuses on how socioeconomics factors are related to childcare center violation in New York. We investigated multiple factors such as borough and childcare type to create a more lucid analysis of occurrence of childcare violation. Specifically, we evaluates borough with high occurrence of violation and childcare types for which most violation occurs. Further details related to the study will be presented in other parts of the websites. 
 
 
 
@@ -39,11 +40,21 @@ Our initial question focuses on how socioeconomics factors are related to childc
  
 # Data
 
-We filter the variables to include currently permitted Children Care Center
+Our data was downloaded from [NYC Open Data](https://data.cityofnewyork.us/Health/DOHMH-Childcare-Center-Inspections/dsg6-ifza) on November 25th. 
 
-For the next step,we remove the useless variables: legal_name, building, street, phone, permit_number, permid_expiration, day care id, url, date_permitted, actual. In addition, we filter out the program type ALL AGE CAMP which has only three data for further lucidification during data analysis. 
+This dataset contains a list of all inspections conducted and any associated violations at active, city-regulated, center-based child care programs and summer camps over the past 3 years. The violations are pre-adjudicated. Violations that are subject to potential penalties (fines) are submitted to NYC Office of Administrative Trials and Hearing where they are adjudicated as either sustained/upheld or dismissed. The dataset also contains additional information on the programs, including license information. For more information on child care in NYC visit: https://www1.nyc.gov/site/doh/services/child-care.page.
 
 
+There are 26397 observations and 34 variables in our raw dataset. 
+
+
+However, we are only interested in the childcare centers that are currently permitted. Hence, we filter the variables to include currently permitted Children Care Center. 
+
+
+For the next step,we remove the useless variables: legal_name, building, street, phone, permit_number, permid_expiration, day care id, url, date_permitted, actual. We then dropped NAs for certain variables. Noted that, for violation category, NA represent NO VIOLATION. So we mutate this column and replace NA with "NO VIOLATION" for clarification. At this point, we found out that for child_care_type == camping (which can also be identified as age rang == "0 YEARS - 16 YEARS"), we only have 3 data points that are valid. Considering the sample size is too small, we decided to exclude this childcare type from our analysis. 
+
+
+The cleand dataset have 14,348 observations and 24 variables. 
 
 ```{r}
 library(tidyverse)
@@ -91,9 +102,7 @@ Childcare_center
 
 
 
-# Exploratory Analysis
-
-
+# Exploratory Data Analysis
 
 ```{r, include = FALSE}
 Childcare_center %>% 
@@ -101,11 +110,7 @@ Childcare_center %>%
   filter(age_range == "2 YEARS - 5 YEARS") 
 ```
 
-In order to illustrate association between age range, program type and violation category. We plotted multiple graphs 
-below.
-
-
-
+In order to illustrate association between age range, program type and violation category. We plotted multiple graphs below.
 
 ```{r}
 ### Age Range vs Violation Category
@@ -240,14 +245,126 @@ The graph above is showing the relationship between borough and the number of vi
 Footer
 
 
+We are also interested in the relationship between maximum capacity and child care type.
 
+We can see from the following boxplot that the distributions of maximum capacity in preschool and Infants / Toddlers are significantly different. Overall, Preschool has higher maximum capacity than Infants/Toddlers, and the range of capicity is also wider than it is in the Infants/Toddlers.The max maximum capacity in childcare center is 371, while the max maximum capacity in Infants/Toddlers is 135. Hence, when we analyze the relationship between violation category and maximum capacity, we should stratify by childcare type and then compare the relationship within each group.
+```{r}
+plotly_capacity_type = Childcare_center %>% 
+  group_by(violation_category, maximum_capacity, child_care_type) %>%
+  plot_ly(y = ~maximum_capacity, color = ~child_care_type, type = "box", colors = "viridis") 
+plotly_capacity_type
+```
+
+We then examine whether there is connection between maximum capacity and violation. Since the maximum capacity in different child care types are different, we display the distribution of maximum capacity vs violation category by child care type. 
+
+We can conclude from the plot that there is no significant difference between the distribution of maximum capacity for each violation category. Besides, there are many outliers in each groups, which means the variance of maximum capacity is large. This may affect our analysis result.
+```{r}
+boxplot_capacity = Childcare_center %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  group_by(violation_category, maximum_capacity, child_care_type) %>% 
+  ggplot(aes(x = violation_category, y = maximum_capacity, color = child_care_type)) +
+  geom_boxplot() +
+  labs(
+    x = "Violation category",
+    y = "Maximum capacity",
+    color = ""
+  ) +
+  theme(legend.position = "bottom") 
+boxplot_capacity
+```
+
+To further analyze the association, we set maximum capacity less than its median as small center, and larger and equal than its median as larger center by child care type, and then compare the frequecny of violation types.
+
+
+**(1). Pre School**
+
+We can see from the frequency bar chart that pre schools with larger maximum capacity are more likely to violate related rules: the frequecnies are higher in all violation categories. In contract, pre schools with smaller maximum capacity have more chance of no violation.
+
+**(2). Infants/Toddlers**
+
+The frequency of violation is higher in Infants/Toddlers with larger maximum capacity; and the frequency of no violation is higher in Infants/Toddlers with smaller maximum capacity. The result suggests the larger childcare centers are more likely to have violations. 
+
+```{r, warning=FALSE, message=FALSE}
+library(patchwork)
+
+bar_max_cap1 = Childcare_center %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category),
+         maximum_capacity_group = ifelse(maximum_capacity<66, "small", "large")) %>%
+  filter(child_care_type == "Child Care - Pre School") %>% 
+  group_by(violation_category, maximum_capacity_group) %>% 
+  summarise(count = n()) %>% 
+  ggplot(aes(x = violation_category, y = count, fill = maximum_capacity_group)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_text(aes(label=count), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  labs(
+    x = "Violation Category",
+    y = "Frequency",
+    title = "Pre School",
+    fill = "Group"
+  ) +
+  theme(legend.position = "bottom", axis.text.x = element_text(size=10, angle=45, hjust = 1)) 
+
+bar_max_cap2 = Childcare_center %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category),
+         maximum_capacity_group = ifelse(maximum_capacity<26, "small", "large")) %>%
+  filter(child_care_type == "Child Care - Infants/Toddlers") %>% 
+  group_by(violation_category, maximum_capacity_group) %>% 
+  summarise(count = n()) %>% 
+  ggplot(aes(x = violation_category, y = count, fill = maximum_capacity_group)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_text(aes(label=count), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  labs(
+    x = "Violation Category",
+    y = "Frequency",
+    title = "Infants/Toddlers",
+    fill = "Group"
+  ) +
+  theme(legend.position = "bottom", axis.text.x = element_text(size=10, angle=45, hjust = 1)) 
+
+bar_max_cap1 + bar_max_cap2
+
+```
+
+
+We then analyzed the relationship between total educational workers and violation category. As we can see, there's no significant difference between the distribution of total education workers in each violation categories.
+
+```{r}
+
+boxplot_worker = Childcare_center %>% 
+  group_by(violation_category, total_educational_workers, child_care_type) %>% 
+  mutate(violation_category = ifelse( is.na(violation_category), "NO VIOLATION", violation_category)) %>%
+  ggplot(aes(x =violation_category  , y = total_educational_workers , color = child_care_type)) +
+  geom_boxplot() +
+  labs(
+    x = "Violation category",
+    y = "Total educational workers",
+    color = ""
+  ) +
+  theme(legend.position = "bottom") 
+
+boxplot_worker
+
+```
+
+Since total educational workers is not significantly associated with violation cetagory, I wonder if the average works per child is a great predictor. Hence, I divided maximum capacity by total educational workers and get average workers per child. As we can see, there's also no significant different within each child care type. But the educational workers per child is higher in Infants/Toddlers than it is in Pre school.
+```{r, warning=FALSE}
+plotly_capacity_type = Childcare_center %>% 
+  mutate(workers_per_child = total_educational_workers/maximum_capacity) %>% 
+  group_by(workers_per_child, violation_category, child_care_type) %>% 
+  plot_ly(y = ~workers_per_child, type = "box", x = ~violation_category, color = ~child_care_type,  colors = "viridis") %>%
+  layout(boxmode = "group")
+plotly_capacity_type
+```
 
 # Additional Analysis
 
+Formal statistical analyses are also performed to see if there's statistical significance between our predictors and violation category.
 
 Chi-squared test and ANOVA are conducted to examine significance of variable borough and program types for predicting violation occurrence.
 
-### Chi-Square test - Borough vs Violation Category
+## Chi-Square test - Borough vs Violation Category
 program type and violation category to test the association between the two variables. 
 
 **H0:There is no association between program type and violation category**
@@ -265,7 +382,7 @@ chisq.test(tbl1)%>%
 There is significant relationship between program type and violation category suggested by the computed p-value much lower than 0.05
 
 
-### Chi-Square test - Program Types vs Violation Category
+## Chi-Square test - Program Types vs Violation Category
 We conducted a chi-squared test between childcare type and violation category to test the association between the two variables. 
 
 **H0:There is no association between childcare type and violation category**
@@ -284,7 +401,7 @@ chisq.test(tbl2) %>%
 There is significant relationship between childcare type and violation category suggested by the computed p-value much lower than 0.05
 
 
-### ANOVA Test - Borough and Violation
+## ANOVA Test - Borough and Violation
 
  We want to examining the relationship between the mean of total violation event (GENERAL+CRITICAL+PUBLIC HEALTH HAZARD) and borough. The frequency of violation events were separated by five boroughs (Manhattan, Brooklyn, Queens, Staten Island, Bronx).  
 
@@ -322,9 +439,8 @@ The p-value is very small(p<0.05). We reject the null hypothesis and saying that
 
 After validating the significance of age range and program type, we constructed a logistics regression model for predicting violation occurrence. 
 
-### Logistic Regression
-To predict whether a childcare facility will violate or not, we fit the data to a logistic regression model. 
-
+## Logistic Regression
+We also want to build a model to predict whether a childcare facility will violate or not. 
 
 Our model is shown below:
 ```{r, warning=FALSE, message=FALSE}
@@ -342,7 +458,7 @@ logistic_model
 ```
 As we can see in the summary, all predictors are significant with p value < 0.01, suggesting association with violation status. Different borough has different coefficients, suggesting regional difference in violation status. The odds of violation for childcare center in Bronx is 0.469, holding all other variables constant.For each of the other borough, the coefficient tells us that the log-odds of violation for a given group is smaller than that of the reference group.
 
-We also used a simple method to test our model accuracy.Firstly, I split our dataset to training and testing dataset, and then fit the model using the training data, and test for accuracy using testing data. Lastly, I used confusion matrix to access our logistic model.
+We also used a simple method to test our model accuracy.Firstly, we split our dataset to training and testing dataset, and then fit the model using the training data, and test for accuracy using testing data. Lastly, I used confusion matrix to access our logistic model.
 
 ```{r, warning=FALSE, message=FALSE}
 library(rsample)   # for data splitting
@@ -378,10 +494,16 @@ confusionMatrix(data=confusion_data$predict_violation, reference = confusion_dat
 It turns out that our model has accuracy rate of 62%, with Kappa coefficient at around 0.24. This means that the predictability of our model is relatively week. But the significance of our predictors indicating that borough, childcare types and maximum capacity are all associated with violation. The reason behind regional disparities in violation should be investigated in the future.
 
 
-The main reason for our weak predictability is that we lack of essential predictors for the model. Combined with the top 10 violation summary we analyzed before, useful information may include: hours of training, celling and floor maintance frequecny, stuff medical clearance status, etc.
-
-
 # Discussion
+  We expected that there would be a relationship between the boroughs and the categories of violation cases. After we analyzed the data for the study of violation cases by borough, we confirmed our idea, and the results showed that Queens was the borough with the highest number of violation cases, especially in the preschool program, while Staten Island had the lowest number of violation cases. Brooklyn performed relatively well because his violation record was much lower than the no-violation record. The Bronx underperforms because its number of violations is 2.5 times higher than its no-violation record. In Manhattan, a childcare provider's violation record is essentially equivalent to a no-violation record. Therefore, we recommend that parents avoid sending their children to childcare centers in the Bronx and Queens, and if they have to, they must ensure that the quality and safety of the centers are satisfactory. Parents should choose relatively safe areas, such as Staten Island, whenever possible. In addition, the ANOVA results of the statistical analysis showed significant differences between the two variables. There are still a significant number of violation cases between the different boroughs. The New York City government should strengthen the regulation, especially the standards and quality of child care centers in the Bronx and Queens, to ensure a healthy environment for children to grow up in and balance the standards between the different boroughs in New York City. Specifically, "Beans Talk Childcare Academy" has the highest violation frequency of 189, "Noreast Bronx Daycare" and "Children of America Queens" also have violation frequency larger than 100. For childcare centers with high frequency of violation, we should adopt strict penalty and try to avoid same violation in the future. This action could help the parents rest assured to choose and trust the children's health care center even in an unfamiliar borough or area.
 
+  Based on the graph of inspection categories versus violation categories, we found that the highest percentage of serious violations were found during the initial annual inspection, so parents should pay more attention to the initial annual inspection report when choosing a childcare provider for their child to ensure safety and reliability. We are pleased to see that the number of violations found in inspections of lead-based paint or water-containing lead is significantly less than in other inspections, but this statistic may also be due to undisciplined monitor. Therefore, we need to standardize such criteria to ensure that potential problems can be identified and addressed more effectively. Based on our top ten regulatory summaries of child care inspections, most of problems were due to inadequately maintained infrastructure, poorly qualified and unsupervised caregivers, and unsanitary environments. These issues are particularly risk factors for children because children attending these centers can't protect themselves. Parents need to be more aware of these issues when choosing a childcare center. We expect those in charge of childcare centers with these problems to take responsibility for them. The government needs to provide more financial and technical support, as well as stricter monitoring and regulation of childcare centers that cannot address these issues on their own, to ensure that New York's children live in a healthy and safe environment.
+  
+  For our prediction model, although relatively weak predictability is observed for this logistic regression model with accuracy rate of 62% and Kappa coefficient at around 0.24, it suggested that borough, childcare type and maximum capacity are all connected with violation and could potentially be estimators of violation occurrence, which is consistent with our EDA. The main reason for our weak predictability is that, we lack of essential predictors for the model. Aiming at constructing a more accurate model, more related variables should be taken into consideration to refine violation prediction. Combined with the top 10 violation summary we analyzed before, useful predictors may include: hours of training, celling and floor maintance frequecny, stuff medical clearance status, etc. This can also be used as a guide for parents when selecting childcare center. 
 
-Although relatively weak predictability is observed for this logistic regression model with accuracy rate of 62% and Kappa coefficient at around 0.24, it is suggested that borough, childcare type and maximum capacity are all connected with violation and could potentially be estimators of violation occurrence. Aiming at constructing a more accurate model, more related variables should be taken into consideration to refine violation prediction.  
+  Our map assists parents in determining the quality of child care centers in different areas with the smallest unit of zipcode. However, since our map aggregates the number of violation in each area, parents should look for more updated and detailed information before selecting one.
+
+  There are several limitations we encountered in our research. The major challenge would be the target variables determination. There are several columns we thought we could use as our target numerical variables. But after we analysis, we found that “violation rate percent”, “public health hazard violation rate”, “average public health hazard violation”, “critical violation rate” and “average critical violation rate” are categorical number data which limits our data analysis part. 
+
+  Additionally, for the map part, we want to map the violation cases in each children care center in NYC. It can represent the data more precise. But for our data set, it doesn’t have the latitude and longitude which make us hard to map as point units to determine the location.
+

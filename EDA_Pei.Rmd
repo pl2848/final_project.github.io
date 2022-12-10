@@ -130,7 +130,6 @@ bar_max_cap2 = Childcare_center %>%
 
 bar_max_cap1 + bar_max_cap2
 
-# arrange
 ```
 
 
